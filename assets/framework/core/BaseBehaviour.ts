@@ -2,7 +2,12 @@
 
 @ccclass
 export default class BaseBehaviour extends cc.Component{
+	
 	protected onLoad():void{
+		
+	}
+	
+	protected onEnable():void{
 		
 	}
 	
@@ -15,10 +20,6 @@ export default class BaseBehaviour extends cc.Component{
 	}
 	
 	protected lateUpdate(dt:number):void{
-		
-	}
-	
-	protected onEnable():void{
 		
 	}
 	

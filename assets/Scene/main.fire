@@ -206,12 +206,12 @@
       "__id__": 2
     },
     "_enabled": true,
+    "m_language": 0,
     "games": [
       {
         "__id__": 4
       }
     ],
-    "m_language": 0,
     "_id": "00yE0+1XNDQpKTf9U5QWxU"
   }
 ]
