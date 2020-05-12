@@ -1,4 +1,4 @@
-﻿import BaseGame from "../Framework/Core/BaseGame";
+﻿import BaseGame from "../framework/core/BaseGame";
 
 const {ccclass, property} = cc._decorator;
 
@@ -7,6 +7,9 @@ export default class Game extends BaseGame{
 	
 	protected onLoad():void{
 		super.onLoad();
+		cc.log("=================Game.onLoad()===============================");
+		
+		
 	}
 	
 }
