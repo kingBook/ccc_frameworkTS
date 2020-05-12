@@ -1,0 +1,21 @@
+{
+    "files.exclude": {
+	  "**/.git": true,
+	  "**/.svn": true,
+	  "**/.hg": true,
+	  "**/CVS": true,
+	  "**/.DS_Store": true,
+	  "**/*.meta":true,
+	  "**/*.gitignore":true,
+
+	  "**/*.vscode":true,
+	  "**/build":true,
+	  "**/library":true,
+	  "**/local":true,
+	  "**/packages":true,
+	  "**/settings":true,
+	  "**/temp":true
+	},
+	"editor.autoClosingQuotes": "beforeWhitespace"
+	
+}
