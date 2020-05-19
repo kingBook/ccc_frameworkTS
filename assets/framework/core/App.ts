@@ -5,6 +5,7 @@ const {ccclass, property} = cc._decorator;
 
 export enum Language{AUTO,CN,EN};
 
+/** 整个应用程序的单例 */
 @ccclass
 export default class App extends BaseBehaviour{
 	
@@ -24,20 +25,22 @@ export default class App extends BaseBehaviour{
 	private _openCount:number;
 	private _isPause:boolean;
 	
-	
+	/** 返回应用的语言CN|EN */
 	public get language():Language{
 		return this.m_language;
 	}
+	/** 返回应用打开的次数 */
 	public get openCount():number{
 		return this._openCount;
 	}
+	/** 返回应用是否已暂停 */
 	public get isPause():boolean{
 		return this._isPause;
 	}
+	/** 返回应用内拥有的游戏实例个数 */
 	public get gameCount():number{
 		return this.games.length;
 	}
-	
 	
 	protected onLoad():void{
 		super.onDestroy();
@@ -47,6 +50,8 @@ export default class App extends BaseBehaviour{
 		if(this.m_language==Language.AUTO){
 			this.initLanguage();
 		}
+		//标记为“常驻节点”，切换场景时不自动销毁
+		cc.game.addPersistRootNode(this.node);
 	}
 	
 	private addOpenCount():void{
@@ -62,6 +67,7 @@ export default class App extends BaseBehaviour{
 		this.node.dispatchEvent(new cc.Event.EventCustom(App.CHANGE_LANGUAGE,false));
 	}
 	
+	/** 设置应用暂停/恢复 */
 	public setPause(isPause:boolean):void{
 		if(this._isPause==isPause)return;
 		this._isPause=isPause;
@@ -72,8 +78,9 @@ export default class App extends BaseBehaviour{
 		this.node.dispatchEvent(new cc.Event.EventCustom(App.PAUSE_OR_RESUME,false));
 	}
 	
-	public getGame(index:number=0):BaseGame{
-		return this.games[index];
+	/** 返回指定索引的游戏实例 */
+	public getGame<T extends BaseGame>(index:number=0):T{
+		return <T>this.games[index];
 	}
 	
 	protected onDestroy():void{
