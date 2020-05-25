@@ -206,8 +206,9 @@
       "__id__": 2
     },
     "_enabled": true,
-    "m_language": 0,
-    "games": [
+    "_language": 0,
+    "_enablePhysics2D": false,
+    "_games": [
       {
         "__id__": 4
       }

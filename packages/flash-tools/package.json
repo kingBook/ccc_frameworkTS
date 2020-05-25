@@ -1,0 +1,12 @@
+{
+	"name": "flash-tools",
+	"version": "0.0.1",
+	"description": "Create animation with plist",
+	"author": "kingBook",
+	"main": "main.js",
+	"main-menu": {
+		"Tools/Create anim with plist":{
+			"message":"flash-tools:create-anim"
+		}
+	}
+}

@@ -8,8 +8,7 @@ export default class Game extends BaseGame{
 	
 	protected onLoad():void{
 		super.onLoad();
-		cc.log("=========Game.onLoad()=========");
-		
+		cc.log("===Game.onLoad()===");
 		
 	}
 	

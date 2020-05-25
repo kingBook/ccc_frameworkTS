@@ -12,22 +12,26 @@ export default class App extends BaseBehaviour{
 	public static readonly CHANGE_LANGUAGE:string="changeLanguage";
 	public static readonly PAUSE_OR_RESUME:string="pauseOrResume";
 	
-	private static _instance:App;
+	private static s_instance:App;
 	public static get instance():App{
-		return App._instance;
+		return App.s_instance;
 	}
 	
-	@property({type:cc.Enum(Language),displayName:"Language"})
-	private m_language:Language=Language.AUTO;
-	@property({type:[BaseGame]})
-	private games:BaseGame[]=[];
+	@property({type:cc.Enum(Language),visible:true})
+	private _language:Language=Language.AUTO;
+	
+	@property({visible:true})
+	private _enablePhysics2D:boolean=false;
+	
+	@property({type:[BaseGame],visible:true})
+	private _games:BaseGame[]=[];
 	
 	private _openCount:number;
 	private _isPause:boolean;
 	
 	/** 返回应用的语言CN|EN */
 	public get language():Language{
-		return this.m_language;
+		return this._language;
 	}
 	/** 返回应用打开的次数 */
 	public get openCount():number{
@@ -39,16 +43,19 @@ export default class App extends BaseBehaviour{
 	}
 	/** 返回应用内拥有的游戏实例个数 */
 	public get gameCount():number{
-		return this.games.length;
+		return this._games.length;
 	}
 	
 	protected onLoad():void{
 		super.onDestroy();
-		App._instance=this;
+		App.s_instance=this;
 		this.addOpenCount();
 
-		if(this.m_language==Language.AUTO){
+		if(this._language==Language.AUTO){
 			this.initLanguage();
+		}
+		if(this._enablePhysics2D){
+			this.initPhysics2D();
 		}
 		//标记为“常驻节点”，切换场景时不自动销毁
 		cc.game.addPersistRootNode(this.node);
@@ -60,9 +67,16 @@ export default class App extends BaseBehaviour{
 		cc.sys.localStorage.setItem(key,this._openCount);
 	}
 	
+	private initPhysics2D():void{
+		let physicsManager:cc.PhysicsManager=cc.director.getPhysicsManager();
+		physicsManager.enabled=true;
+		physicsManager.debugDrawFlags=cc.PhysicsManager.DrawBits.e_jointBit|
+									  cc.PhysicsManager.DrawBits.e_shapeBit;
+	} 
+	
 	private initLanguage():void{
-		var isCN:boolean=cc.sys.language==cc.sys.LANGUAGE_CHINESE;
-		this.m_language=isCN?Language.CN:Language.EN;
+		let isCN:boolean=cc.sys.language==cc.sys.LANGUAGE_CHINESE;
+		this._language=isCN?Language.CN:Language.EN;
 		//改变语言事件
 		this.node.dispatchEvent(new cc.Event.EventCustom(App.CHANGE_LANGUAGE,false));
 	}
@@ -80,7 +94,7 @@ export default class App extends BaseBehaviour{
 	
 	/** 返回指定索引的游戏实例 */
 	public getGame<T extends BaseGame>(index:number=0):T{
-		return <T>this.games[index];
+		return <T>this._games[index];
 	}
 	
 	protected onDestroy():void{
