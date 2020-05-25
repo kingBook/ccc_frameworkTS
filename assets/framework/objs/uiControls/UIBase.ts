@@ -1,4 +1,5 @@
-import BaseBehaviour from "../core/BaseBehaviour";
+import BaseBehaviour from "../../core/BaseBehaviour";
+
 
 const {ccclass, property} = cc._decorator;
 

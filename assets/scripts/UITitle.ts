@@ -1,6 +1,6 @@
-﻿import UIBase from "../framework/objs/UIBase";
-import App from "../framework/core/App";
+﻿import App from "../framework/core/App";
 import Game from "./Game";
+import UIBase from "../framework/objs/uiControls/UIBase";
 
 const {ccclass,property}=cc._decorator;
 
