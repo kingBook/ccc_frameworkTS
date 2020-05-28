@@ -13,10 +13,13 @@ export default class DirectionKeyboardInput extends BaseBehaviour{
 	
 	@property({type:cc.Enum(cc.macro.KEY),visible:true})
 	private _leftKey:cc.macro.KEY=cc.macro.KEY.a;
+	
 	@property({type:cc.Enum(cc.macro.KEY),visible:true})
 	private _rightKey:cc.macro.KEY=cc.macro.KEY.d;
+	
 	@property({type:cc.Enum(cc.macro.KEY),visible:true})
 	private _upKey:cc.macro.KEY=cc.macro.KEY.w;
+	
 	@property({type:cc.Enum(cc.macro.KEY),visible:true})
 	private _downKey:cc.macro.KEY=cc.macro.KEY.s;
 	

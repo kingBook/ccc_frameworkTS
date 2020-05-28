@@ -19,10 +19,10 @@ export default class App extends BaseBehaviour{
 	
 	@property({type:cc.Enum(Language),visible:true})
 	private _language:Language=Language.AUTO;
-	
 	@property({visible:true})
 	private _enablePhysics2D:boolean=false;
-	
+	@property({visible:true})
+	private _disablePhysics2DDebugDraw:boolean=false;
 	@property({type:[BaseGame],visible:true})
 	private _games:BaseGame[]=[];
 	
@@ -70,9 +70,11 @@ export default class App extends BaseBehaviour{
 	private initPhysics2D():void{
 		let physicsManager:cc.PhysicsManager=cc.director.getPhysicsManager();
 		physicsManager.enabled=true;
-		physicsManager.debugDrawFlags=cc.PhysicsManager.DrawBits.e_jointBit|
-									  cc.PhysicsManager.DrawBits.e_shapeBit;
-	} 
+		if(!this._disablePhysics2DDebugDraw){
+			physicsManager.debugDrawFlags=cc.PhysicsManager.DrawBits.e_jointBit|
+										  cc.PhysicsManager.DrawBits.e_shapeBit;
+		}
+	}
 	
 	private initLanguage():void{
 		let isCN:boolean=cc.sys.language==cc.sys.LANGUAGE_CHINESE;

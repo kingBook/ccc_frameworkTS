@@ -1,6 +1,6 @@
 {
 	"name": "flash-tools",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"description": "Create animation with plist",
 	"author": "kingBook",
 	"main": "main.js",
