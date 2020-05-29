@@ -9,7 +9,9 @@ export enum Language{AUTO,CN,EN};
 @ccclass
 export default class App extends BaseBehaviour{
 	
+	/** 改变语言事件，回调函数格式：():void */
 	public static readonly CHANGE_LANGUAGE:string="changeLanguage";
+	/** 暂停或恢复事件，回调函数格式：():void */
 	public static readonly PAUSE_OR_RESUME:string="pauseOrResume";
 	
 	private static s_instance:App;
@@ -22,6 +24,8 @@ export default class App extends BaseBehaviour{
 	@property({visible:true})
 	private _enablePhysics2D:boolean=false;
 	@property({visible:true})
+	@property({displayName:"　　　Gravity 2D",visible:true})
+	private _gravity2D:cc.Vec2=new cc.Vec2(0,-320);
 	private _disablePhysics2DDebugDraw:boolean=false;
 	@property({type:[BaseGame],visible:true})
 	private _games:BaseGame[]=[];
@@ -70,6 +74,7 @@ export default class App extends BaseBehaviour{
 	private initPhysics2D():void{
 		let physicsManager:cc.PhysicsManager=cc.director.getPhysicsManager();
 		physicsManager.enabled=true;
+		physicsManager.gravity=this._gravity2D;//必须在physicsManager.enabled=true;之后设置
 		if(!this._disablePhysics2DDebugDraw){
 			physicsManager.debugDrawFlags=cc.PhysicsManager.DrawBits.e_jointBit|
 										  cc.PhysicsManager.DrawBits.e_shapeBit;
@@ -79,8 +84,8 @@ export default class App extends BaseBehaviour{
 	private initLanguage():void{
 		let isCN:boolean=cc.sys.language==cc.sys.LANGUAGE_CHINESE;
 		this._language=isCN?Language.CN:Language.EN;
-		//改变语言事件
-		this.node.dispatchEvent(new cc.Event.EventCustom(App.CHANGE_LANGUAGE,false));
+		//发送改变语言事件
+		this.node.emit(App.CHANGE_LANGUAGE);
 	}
 	
 	/** 设置应用暂停/恢复 */
@@ -90,8 +95,8 @@ export default class App extends BaseBehaviour{
 		
 		if(this._isPause)cc.game.pause();
 		else cc.game.resume();
-		
-		this.node.dispatchEvent(new cc.Event.EventCustom(App.PAUSE_OR_RESUME,false));
+		//发送暂停或恢复事件
+		this.node.emit(App.PAUSE_OR_RESUME);
 	}
 	
 	/** 返回指定索引的游戏实例 */
