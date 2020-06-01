@@ -1,5 +1,6 @@
 ﻿import BaseBehaviour from "./BaseBehaviour";
 import BaseGame from "./BaseGame";
+import SceneLoader from "./SceneLoader";
 
 const {ccclass, property} = cc._decorator;
 
@@ -21,31 +22,38 @@ export default class App extends BaseBehaviour{
 	
 	@property({type:cc.Enum(Language),visible:true})
 	private _language:Language=Language.AUTO;
+	@property({type:SceneLoader,visible:true})
+	private _sceneLoader:SceneLoader=null;
 	@property({visible:true})
 	private _enablePhysics2D:boolean=false;
 	@property({visible:true})
-	@property({displayName:"　　　Gravity 2D",visible:true})
+	@property({displayName:"　　　Gravity",visible:true})
 	private _gravity2D:cc.Vec2=new cc.Vec2(0,-320);
-	private _disablePhysics2DDebugDraw:boolean=false;
+	@property({displayName:"　　　Debug Draw",visible:true})
+	private _enablePhysics2DDebugDraw:boolean=true;
 	@property({type:[BaseGame],visible:true})
 	private _games:BaseGame[]=[];
 	
 	private _openCount:number;
 	private _isPause:boolean;
 	
-	/** 返回应用的语言CN|EN */
+	/** 应用的语言 CN | EN */
 	public get language():Language{
 		return this._language;
 	}
-	/** 返回应用打开的次数 */
+	/** 场景加载器 */
+	public get sceneLoader():SceneLoader{
+		return this._sceneLoader;
+	}
+	/** 应用打开的次数 */
 	public get openCount():number{
 		return this._openCount;
 	}
-	/** 返回应用是否已暂停 */
+	/** 应用是否已暂停 */
 	public get isPause():boolean{
 		return this._isPause;
 	}
-	/** 返回应用内拥有的游戏实例个数 */
+	/** 应用内拥有的游戏实例个数 */
 	public get gameCount():number{
 		return this._games.length;
 	}
@@ -75,7 +83,7 @@ export default class App extends BaseBehaviour{
 		let physicsManager:cc.PhysicsManager=cc.director.getPhysicsManager();
 		physicsManager.enabled=true;
 		physicsManager.gravity=this._gravity2D;//必须在physicsManager.enabled=true;之后设置
-		if(!this._disablePhysics2DDebugDraw){
+		if(this._enablePhysics2DDebugDraw){
 			physicsManager.debugDrawFlags=cc.PhysicsManager.DrawBits.e_jointBit|
 										  cc.PhysicsManager.DrawBits.e_shapeBit;
 		}

@@ -9,8 +9,8 @@ export default class CameraFollow2D extends BaseBehaviour{
 	/** 移动事件，回调函数格式：(vx:number,vy:number):void */
 	public static readonly MOVE:string="move";
 	
-	@property({type:cc.Node,visible:true})
-	private _target:cc.Node=null;
+	@property({type:[cc.Node],visible:true})
+	private _targets:cc.Node[]=[];
 	@property({visible:true})
 	private _isLookToTargetOnStart:boolean=true;
 	@property({range:[0,1],slide:true,visible:true,tooltip:"取值区间 (0,1] 值越大锁定到目标的速度越快"})
@@ -34,8 +34,16 @@ export default class CameraFollow2D extends BaseBehaviour{
 	private _min:cc.Vec2;//将_worldPosMin转换为以父节点为原点的坐标（无父节点时则不变）
 	private _max:cc.Vec2;//将_worldPosMax转换为以父节点为原点的坐标（无父节点时则不变）
 	
-	public setTarget(value:cc.Node):void{
-		this._target=value;
+	public addTarget(value:cc.Node):void{
+		let index=this._targets.indexOf(value);
+		if(index>-1)return;
+		this._targets.push(value);
+	}
+	
+	public removeTarget(value:cc.Node):void{
+		let index=this._targets.indexOf(value);
+		if(index<0)return;
+		this._targets.splice(index,1);
 	}
 	
 	protected onLoad():void{
@@ -59,27 +67,27 @@ export default class CameraFollow2D extends BaseBehaviour{
 	protected start():void{
 		super.start();
 		if(this._isLookToTargetOnStart){
-			this.lookToTarget(1);
+			this.lookToTargets(1);
 		}
 	}
 	
 	protected update(dt:number):void{
 		super.update(dt);
-		this.lookToTarget(this._learpTime);
+		this.lookToTargets(this._learpTime);
 	}
 	
-	private lookToTarget(t:number):void{
+	private lookToTargets(t:number):void{
 		let size:cc.Size=cc.winSize;
 		let extents:cc.Vec2=new cc.Vec2(size.width*0.5,size.height*0.5);
 		let min:cc.Vec2=this._min.add(extents);
 		let max:cc.Vec2=this._max.sub(extents);
 		
-		let targetWorldPos:cc.Vec2=this._target.convertToWorldSpaceAR(cc.Vec2.ZERO);
-		let targetToParentPos:cc.Vec2=this.node.parent.convertToNodeSpaceAR(targetWorldPos);
+		let targetsWorldCenter:cc.Vec2=this.getTargetsWorldCenter();
+		let targetsWorldCeneterOfParent:cc.Vec2=this.node.parent.convertToNodeSpaceAR(targetsWorldCenter);
 		let myPosX=this.node.x;
 		let myPosY=this.node.y;
-		let x:number=myPosX+(targetToParentPos.x-myPosX)*t;
-		let y:number=myPosY+(targetToParentPos.y-myPosY)*t;
+		let x:number=myPosX+(targetsWorldCeneterOfParent.x-myPosX)*t;
+		let y:number=myPosY+(targetsWorldCeneterOfParent.y-myPosY)*t;
 		x=Mathk.clamp(x,min.x,max.x);
 		y=Mathk.clamp(y,min.y,max.y);
 		this.node.setPosition(x,y);
@@ -88,4 +96,17 @@ export default class CameraFollow2D extends BaseBehaviour{
 		let vy:number=y-myPosY;
 		this.node.emit(CameraFollow2D.MOVE,vx,vy);
 	}
+	
+	private getTargetsWorldCenter():cc.Vec2{
+		let len:number=this._targets.length;
+		let sum:cc.Vec2=cc.Vec2.ZERO;
+		for(let i=0;i<len;i++){
+			let target:cc.Node=this._targets[i];
+			let targetWorldPos:cc.Vec2=target.convertToWorldSpaceAR(cc.Vec2.ZERO);
+			sum.addSelf(targetWorldPos);
+		}
+		sum.mulSelf(1/len);
+		return sum;
+	}
+	
 }

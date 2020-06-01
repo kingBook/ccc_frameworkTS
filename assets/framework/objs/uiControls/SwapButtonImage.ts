@@ -16,29 +16,21 @@ export default class SwapButtonImage extends BaseBehaviour{
 	private _isSwapOnClick:boolean=true;
 	
 	private _button:cc.Button;
-	private _eventHandler:cc.Component.EventHandler;
 	
 	protected onLoad():void{
 		super.onLoad();
 		this._button=this.getComponent(cc.Button);
 		//添加onClick函数到按钮点击事件列表
 		if(this._isSwapOnClick){
-			var eventHandler=new cc.Component.EventHandler();
-			eventHandler.target=this.node;
-			eventHandler.component=SwapButtonImage.name;
-			eventHandler.handler="onClick";
-			//eventHandler.customEventData="my data";
-			this._eventHandler=eventHandler;
-			this._button.clickEvents.push(eventHandler);
+			this._button.node.on(cc.Node.EventType.TOUCH_START,this.onTouchStart,this);
 		}
-		
 		//
 		if(this._sprite==null){
 			this._sprite=this._button.target.getComponent(cc.Sprite);
 		}
 	}
 	
-	private onClick(event:cc.Event.EventTouch,customData:any):void{
+	private onTouchStart(event:cc.Event.EventTouch):void{
 		this.autoSwap();
 	}
 	
@@ -56,11 +48,7 @@ export default class SwapButtonImage extends BaseBehaviour{
 	
 	protected onDestroy():void{
 		if(this._isSwapOnClick){
-			let id=this._button.clickEvents.indexOf(this._eventHandler);
-			if(id>-1){
-				this._button.clickEvents.splice(id,1);
-			}
-			this._eventHandler=null;
+			this._button.node.off(cc.Node.EventType.TOUCH_START,this.onTouchStart,this);
 		}
 		super.onDestroy();
 	}

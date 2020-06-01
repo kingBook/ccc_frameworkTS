@@ -2,6 +2,9 @@
 
 const{ccclass,property}=cc._decorator;
 
+var KEY=cc.Enum({});
+Object.assign(KEY,cc.macro.KEY);
+
 /** 方向键盘输入 */
 @ccclass
 export default class DirectionKeyboardInput extends BaseBehaviour{
@@ -11,16 +14,16 @@ export default class DirectionKeyboardInput extends BaseBehaviour{
 	private static readonly UP:number   =0x0004;
 	private static readonly DOWN:number =0x0008;
 	
-	@property({type:cc.Enum(cc.macro.KEY),visible:true})
+	@property({type:KEY,visible:true})
 	private _leftKey:cc.macro.KEY=cc.macro.KEY.a;
 	
-	@property({type:cc.Enum(cc.macro.KEY),visible:true})
+	@property({type:KEY,visible:true})
 	private _rightKey:cc.macro.KEY=cc.macro.KEY.d;
 	
-	@property({type:cc.Enum(cc.macro.KEY),visible:true})
+	@property({type:KEY,visible:true})
 	private _upKey:cc.macro.KEY=cc.macro.KEY.w;
 	
-	@property({type:cc.Enum(cc.macro.KEY),visible:true})
+	@property({type:KEY,visible:true})
 	private _downKey:cc.macro.KEY=cc.macro.KEY.s;
 	
 	private _pressKeyFlags:number=0;//用于记录按下方向键的标记（一个二进制位表示一个方向键是否按下）
