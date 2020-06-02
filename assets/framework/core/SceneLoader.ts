@@ -11,7 +11,7 @@ export default class SceneLoader extends BaseBehaviour{
 	
 	private _frameCount:number;
 	private _isLoading:boolean=false;
-	private _virtualProgress;//假的加载进度[0,99]
+	private _virtualProgress;//假的加载进度[0,90]
 	
 	/**
 	 * 通过场景名称进行加载场景。
@@ -92,7 +92,7 @@ export default class SceneLoader extends BaseBehaviour{
 			this._frameCount++;
 			if(this._frameCount%2==0){
 				this._frameCount=0;
-				this._virtualProgress=Math.min(this._virtualProgress+0.01,0.99);
+				this._virtualProgress=Math.min(this._virtualProgress+0.01,0.9);
 				this._sceneProgressBar.setProgress(this._virtualProgress);
 				this._sceneProgressBar.setText("Loading "+Math.floor(this._virtualProgress*100)+"%...");
 			}
