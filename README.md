@@ -12,3 +12,8 @@ private _id:number=0;
 在properties面板输入新名称时与其他同名
 
 Inspector面板滚动值保存
+
+node的Group
+Timeline面板使用过程
+
+Project Settings => GroupManager 设置问题

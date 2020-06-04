@@ -1,9 +1,4 @@
-import BaseBehaviour from "../core/BaseBehaviour";
-
-const {ccclass, property} = cc._decorator;
-
-@ccclass
-export default class Random extends BaseBehaviour{
+export default class Random{
 	
 	/** 返回区间 [0,1) 的随机浮点数 */
 	public static get value():number{ 
