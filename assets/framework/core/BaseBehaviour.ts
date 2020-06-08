@@ -1,5 +1,5 @@
 ﻿/** 所有脚本组件的基类 */
-export default class BaseBehaviour extends cc.Component{
+export default abstract class BaseBehaviour extends cc.Component{
 	
 	/** 当附加到一个激活的节点上或者其节点第一次激活时在onEnable和start之前调用 */
 	protected onLoad():void{
