@@ -10,7 +10,7 @@ export enum Language{AUTO,CN,EN};
 @ccclass
 export default class App extends BaseBehaviour{
 	
-	/** 改变语言事件，回调函数格式：():void */
+	/** 改变语言事件，回调函数格式：(language:Language):void */
 	public static readonly CHANGE_LANGUAGE:string="changeLanguage";
 	/** 暂停或恢复事件，回调函数格式：():void */
 	public static readonly PAUSE_OR_RESUME:string="pauseOrResume";
@@ -93,7 +93,7 @@ export default class App extends BaseBehaviour{
 		let isCN:boolean=cc.sys.language==cc.sys.LANGUAGE_CHINESE;
 		this._language=isCN?Language.CN:Language.EN;
 		//发送改变语言事件
-		this.node.emit(App.CHANGE_LANGUAGE);
+		this.node.emit(App.CHANGE_LANGUAGE,this._language);
 	}
 	
 	/** 设置应用暂停/恢复 */

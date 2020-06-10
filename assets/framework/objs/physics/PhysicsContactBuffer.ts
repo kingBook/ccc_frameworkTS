@@ -1,4 +1,5 @@
-﻿import BaseBehaviour from "../core/BaseBehaviour";
+﻿import BaseBehaviour from "../../core/BaseBehaviour";
+
 
 const{ccclass,requireComponent}=cc._decorator;
 /** 物理接触缓存器，用于每帧保存刚体的所有接触（需要开启cc.RigidBody.enabledContactListener） */

@@ -1,5 +1,5 @@
 import BaseBehaviour from "../../core/BaseBehaviour";
-import SwapSpriteFrame from "../SwapSpriteFrame";
+import SwapSpriteFrame from "./SwapSpriteFrame";
 
 const {ccclass,requireComponent}=cc._decorator;
 
