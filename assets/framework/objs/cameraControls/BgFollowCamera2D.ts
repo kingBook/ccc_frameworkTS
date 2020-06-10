@@ -30,7 +30,9 @@ export default class BgFollowCamera2D extends BaseBehaviour{
 	}
 	
 	protected onDestroy():void{
-		this._cameraFollow.node.off(CameraFollow2D.MOVE,this.onCameraMove,this);
+		if(this._cameraFollow.node){
+			this._cameraFollow.node.off(CameraFollow2D.MOVE,this.onCameraMove,this);
+		}
 		super.onDestroy();
 	}
 	
