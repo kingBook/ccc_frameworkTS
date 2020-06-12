@@ -45,6 +45,16 @@ export default class LanguageSwitcher extends BaseBehaviour{
 		this.activeWithLanguage(language);
 	}
 	
+	public addToCnNodes(node:cc.Node):void{
+		let index=this._cnNodes.indexOf(node);
+		if(index<0)this._cnNodes.push(node);
+	}
+	
+	public addToEnNodes(node:cc.Node):void{
+		let index=this._enNodes.indexOf(node);
+		if(index<0)this._enNodes.push(node);
+	}
+	
 	protected onDestroy():void{
 		App.instance.node.off(App.CHANGE_LANGUAGE,this.onChangeLanguage,this);
 		super.onDestroy();
