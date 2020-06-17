@@ -15,3 +15,5 @@ Timeline面板使用过程
 Project Settings => GroupManager 设置问题
 
 
+		
+cc.ScrollView:scroll-to-top/bottom/left/right 事件无反应
