@@ -1,6 +1,7 @@
 ﻿import BaseBehaviour from "./BaseBehaviour";
 import BaseGame from "./BaseGame";
 import SceneLoader from "./SceneLoader";
+import SubpackageLoader from "./SubpackageLoader";
 
 const {ccclass, property} = cc._decorator;
 
@@ -24,6 +25,8 @@ export default class App extends BaseBehaviour{
 	private _language:Language=Language.AUTO;
 	@property({type:SceneLoader,visible:true})
 	private _sceneLoader:SceneLoader=null;
+	@property({type:SubpackageLoader,visible:true})
+	private _subpackageLoader:SubpackageLoader=null;
 	@property({visible:true})
 	private _enablePhysics2D:boolean=false;
 	@property({visible:true})
@@ -33,6 +36,10 @@ export default class App extends BaseBehaviour{
 	private _enablePhysics2DDebugDraw:boolean=true;
 	@property({type:[BaseGame],visible:true})
 	private _games:BaseGame[]=[];
+	@property({range:[0,1],slide:true,visible:true})
+	private _musicVolume:number=1;
+	@property({range:[0,1],slide:true,visible:true})
+	private _effectsVolume:number=1;
 	
 	private _openCount:number;
 	private _isPause:boolean;
@@ -45,6 +52,10 @@ export default class App extends BaseBehaviour{
 	public get sceneLoader():SceneLoader{
 		return this._sceneLoader;
 	}
+	/** 分包加载器 */
+	public get subpackageLoader():SubpackageLoader{
+		return this._subpackageLoader;
+	}
 	/** 应用打开的次数 */
 	public get openCount():number{
 		return this._openCount;
@@ -52,6 +63,18 @@ export default class App extends BaseBehaviour{
 	/** 应用是否已暂停 */
 	public get isPause():boolean{
 		return this._isPause;
+	}
+	/** 应用是否静音 */
+	public get isMute():boolean{
+		return cc.audioEngine.getMusicVolume()==0 && cc.audioEngine.getEffectsVolume()==0;
+	}
+	/** 背景音乐音量与cc.audioEngine.getMusicVolume()一样 */
+	public get musicVolume():number{
+		return this._musicVolume;
+	}
+	/** 音效音量与cc.audioEngine.getEffectsVolume()一样 */
+	public get effectsVolume():number{
+		return this._effectsVolume;
 	}
 	/** 应用内拥有的游戏实例个数 */
 	public get gameCount():number{
@@ -62,7 +85,8 @@ export default class App extends BaseBehaviour{
 		super.onDestroy();
 		App.s_instance=this;
 		this.addOpenCount();
-
+		this.audioEngineExtension();
+		
 		if(this._language==Language.AUTO){
 			this.initLanguage();
 		}
@@ -78,6 +102,26 @@ export default class App extends BaseBehaviour{
 		this._openCount=parseInt(cc.sys.localStorage.getItem(key,0))+1;
 		cc.sys.localStorage.setItem(key,this._openCount);
 	}
+	
+	/** 声音引擎扩展 */
+	private audioEngineExtension():void{
+		let self=this;
+		cc.audioEngine.setMusicVolume(self._musicVolume);
+		cc.audioEngine.setEffectsVolume(self._effectsVolume);
+		//重定义cc.audioEngine.setMusicVolume方法，调节音量时也设置App._musicVolume
+		let setMusicVolumeFunc=cc.audioEngine.setMusicVolume.bind(cc.audioEngine);
+		cc.audioEngine.setMusicVolume=(volume:number)=>{
+			setMusicVolumeFunc(volume);
+			self._musicVolume=volume;
+		};
+		//重定义cc.audioEngine.setMusicVolume方法，调节音量时也设置App._musicVolume
+		let setEffectsVolumeFunc=cc.audioEngine.setEffectsVolume.bind(cc.audioEngine);
+		cc.audioEngine.setEffectsVolume=(volume:number)=>{
+			setEffectsVolumeFunc(volume);
+			self._effectsVolume=volume;
+		};
+	}
+	
 	
 	private initPhysics2D():void{
 		let physicsManager:cc.PhysicsManager=cc.director.getPhysicsManager();
@@ -105,6 +149,12 @@ export default class App extends BaseBehaviour{
 		else cc.game.resume();
 		//发送暂停或恢复事件
 		this.node.emit(App.PAUSE_OR_RESUME);
+	}
+	
+	/** 设置静音 */
+	public setMute(isMute:boolean):void{
+		cc.audioEngine.setMusicVolume(isMute?0:this._musicVolume);
+		cc.audioEngine.setEffectsVolume(isMute?0:this._effectsVolume);
 	}
 	
 	/** 返回指定索引的游戏实例 */

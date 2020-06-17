@@ -14,7 +14,7 @@ export default class UITitle extends UIBase{
      * @param customEventData 
      */
     public onStartGame(event:cc.Event.EventTouch,customEventData:any):void{
-        App.instance.getGame<Game>().gotoLevelScenen();
+        App.instance.getGame<Game>().gotoLevelScene();
     }
     
     

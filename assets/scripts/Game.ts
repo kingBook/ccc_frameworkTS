@@ -18,11 +18,11 @@ export default class Game extends BaseGame{
 	}
 	
 	public gotoTitleScene(){
-		cc.director.loadScene("scenes/title");
+		cc.director.loadScene("title");
 	}
 	
-	public gotoLevelScenen(){
-		cc.director.loadScene("scenes/level");
+	public gotoLevelScene(){
+		cc.director.loadScene("level");
 	}
 	
 }

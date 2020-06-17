@@ -24,7 +24,9 @@ export default class SwapButtonImage extends BaseBehaviour{
 	}
 	
 	protected onDestroy():void{
-		this._button.node.off(cc.Node.EventType.TOUCH_START,this.onTouchStart,this);
+		if(this._button.node){
+			this._button.node.off(cc.Node.EventType.TOUCH_START,this.onTouchStart,this);
+		}
 		super.onDestroy();
 	}
 	
