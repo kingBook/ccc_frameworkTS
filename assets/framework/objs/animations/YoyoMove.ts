@@ -4,7 +4,7 @@ const{ccclass,property}=cc._decorator;
 
 /** Yoyo动画 */
 @ccclass
-export default class AnimYoyo extends BaseBehaviour{
+export default class YoyoMove extends BaseBehaviour{
 	
 	@property({range:[-180,180],slide:true})
 	public angle:number=90;
