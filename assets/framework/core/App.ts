@@ -7,7 +7,7 @@ const {ccclass, property} = cc._decorator;
 
 export enum Language{AUTO,CN,EN};
 
-/** 整个应用程序的单例 */
+/** 整个应用程序的单例，调用时用如下代码：App.instance */
 @ccclass
 export default class App extends BaseBehaviour{
 	
