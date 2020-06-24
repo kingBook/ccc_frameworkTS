@@ -88,4 +88,20 @@
 		let worldPosition=originNode.parent.convertToWorldSpaceAR(originNode.position);
 		return targetNode.convertToNodeSpaceAR(worldPosition);
 	}
+	
+	/**
+	 * 递归查找父节点中第一个匹配指定类型的组件。
+	 * @param node 
+	 * @param type 
+	 */
+	public static getComponentInParent<T extends cc.Component>(node:cc.Node, type:{prototype:T}):T{
+		let parent=node.parent;
+		while(parent){
+			if(parent instanceof cc.Scene)break;
+			let cpt=parent.getComponent(type);
+			if(cpt)return cpt;
+			parent=parent.parent;
+		}
+		return null;
+	}
 }
