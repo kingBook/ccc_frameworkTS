@@ -11,7 +11,8 @@ export default class SceneLoader extends BaseBehaviour{
 	
 	private _frameCount:number;
 	private _isLoading:boolean=false;
-	private _virtualProgress;//假的加载进度[0,90]
+	private _virtualProgress;//假的加载进度[0,0.9]
+	private _sceneName:string;
 	
 	/**
 	 * 通过场景名称进行加载场景。
@@ -24,9 +25,10 @@ export default class SceneLoader extends BaseBehaviour{
 	public load(sceneName:string,progressVisible:boolean=false,isDestroyCurrentSceneChildren:boolean=true,onLaunched?:Function):boolean{
 		if(isDestroyCurrentSceneChildren)this.destroyCurrentLogicSceneChildren(false);
 		if(progressVisible){
+			this._sceneName=sceneName;
 			this._sceneProgressBar.node.active=true;
 			this._sceneProgressBar.setProgress(0);
-			this._sceneProgressBar.setText("Loading 0%...");
+			this._sceneProgressBar.setText("Loading scene "+this._sceneName+".fire 0%...");
 			//初始设置虚拟进度
 			this._isLoading=true;
 			this._frameCount=0;
@@ -55,9 +57,10 @@ export default class SceneLoader extends BaseBehaviour{
 	public preload(sceneName:string,progressVisible:boolean=true,isDestroyCurrentSceneChildren:boolean=true,isLaunchOnLoaded:boolean=true,onProgress?:(completedCount:number,totalCount:number,item:any)=>void, onLoaded?:(error:Error,asset:cc.SceneAsset)=>void):void{
 		if(isDestroyCurrentSceneChildren)this.destroyCurrentLogicSceneChildren(false);
 		if(progressVisible){
+			this._sceneName=sceneName;
 			this._sceneProgressBar.node.active=true;
 			this._sceneProgressBar.setProgress(0);
-			this._sceneProgressBar.setText("Loading 0%...");
+			this._sceneProgressBar.setText("Loading scene "+this._sceneName+".fire 0%...");
 			//初始设置虚拟进度
 			this._isLoading=true;
 			this._frameCount=0;
@@ -69,7 +72,7 @@ export default class SceneLoader extends BaseBehaviour{
 				if(progressVisible){
 					let progress:number=Math.max(this._virtualProgress,completedCount/totalCount);
 					this._sceneProgressBar.setProgress(progress);
-					this._sceneProgressBar.setText("Loading "+Math.floor(progress*100)+"%...");
+					this._sceneProgressBar.setText("Loading scene "+this._sceneName+".fire "+Math.floor(progress*100)+"%...");
 					this._virtualProgress=progress;
 				}
 				if(onProgress!=null)onProgress(completedCount,totalCount,item);
@@ -85,7 +88,6 @@ export default class SceneLoader extends BaseBehaviour{
 		);
 	}
 	
-	
 	protected update(dt:number):void{
 		super.update(dt);
 		if(this._isLoading){
@@ -94,7 +96,7 @@ export default class SceneLoader extends BaseBehaviour{
 				this._frameCount=0;
 				this._virtualProgress=Math.min(this._virtualProgress+0.01,0.9);
 				this._sceneProgressBar.setProgress(this._virtualProgress);
-				this._sceneProgressBar.setText("Loading "+Math.floor(this._virtualProgress*100)+"%...");
+				this._sceneProgressBar.setText("Loading scene "+this._sceneName+".fire "+Math.floor(this._virtualProgress*100)+"%...");
 			}
 		}
 	}

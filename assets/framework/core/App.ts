@@ -36,9 +36,9 @@ export default class App extends BaseBehaviour{
 	private _enablePhysics2DDebugDraw:boolean=true;
 	@property({type:[BaseGame],visible:true})
 	private _games:BaseGame[]=[];
-	@property({range:[0,1],slide:true,visible:true})
+	@property({range:[0,1],slide:true,visible:true,tooltip:"背景音乐音量"})
 	private _musicVolume:number=1;
-	@property({range:[0,1],slide:true,visible:true})
+	@property({range:[0,1],slide:true,visible:true,tooltip:"音效音量"})
 	private _effectsVolume:number=1;
 	
 	private _openCount:number;
