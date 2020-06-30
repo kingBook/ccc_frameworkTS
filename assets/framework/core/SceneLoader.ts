@@ -52,9 +52,9 @@ export default class SceneLoader extends BaseBehaviour{
 	 * @param isDestroyCurrentSceneChildren 默认为 true，是否删除当前逻辑场景的所有非常驻节点
 	 * @param isLaunchOnLoaded 默认为 true，加载场景完成时是否启动场景
 	 * @param onProgress 加载过程中的回调函数，格式：(completedCount:number,totalCount:number,item:any):void
-	 * @param onLoaded 场景加载完成时的回调函数，格式：(error:Error,asset:cc.SceneAsset):void
+	 * @param onLoaded 场景加载完成时的回调函数，格式：(error:Error):void
 	 */
-	public preload(sceneName:string,progressVisible:boolean=true,isDestroyCurrentSceneChildren:boolean=true,isLaunchOnLoaded:boolean=true,onProgress?:(completedCount:number,totalCount:number,item:any)=>void, onLoaded?:(error:Error,asset:cc.SceneAsset)=>void):void{
+	public preload(sceneName:string,progressVisible:boolean=true,isDestroyCurrentSceneChildren:boolean=true,isLaunchOnLoaded:boolean=true,onProgress?:(completedCount:number,totalCount:number,item:any)=>void, onLoaded?:(error:Error)=>void):void{
 		if(isDestroyCurrentSceneChildren)this.destroyCurrentLogicSceneChildren(false);
 		if(progressVisible){
 			this._sceneName=sceneName;
@@ -77,13 +77,13 @@ export default class SceneLoader extends BaseBehaviour{
 				}
 				if(onProgress!=null)onProgress(completedCount,totalCount,item);
 			},
-			(error:Error,asset:cc.SceneAsset)=>{
+			(error:Error)=>{
 				if(progressVisible){
 					this._sceneProgressBar.node.active=false;
 					this._isLoading=false;//结束计算虚拟进度
 				}
 				if(isLaunchOnLoaded)cc.director.loadScene(sceneName);//启动场景
-				if(onLoaded!=null)onLoaded(error,asset);
+				if(onLoaded!=null)onLoaded(error);
 			}
 		);
 	}

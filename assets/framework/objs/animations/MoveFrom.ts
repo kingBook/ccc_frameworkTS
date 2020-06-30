@@ -9,21 +9,24 @@ export default class MoveFrom extends BaseBehaviour{
 	public static readonly COMPLETE:string="complete";
 	
 	@property({visible:true})
-	private _from:cc.Vec2=cc.v2(0,650);
+	private _from:cc.Vec3=cc.v3(0,650,0);
 	@property({visible:true})
 	private _duration:number=1.5;
 	
-	private _posRecord:cc.Vec2;
-	
-	
-	protected onLoad():void{
-		super.onLoad();
-		this._posRecord=this.node.getPosition().clone();
-	}
+	private _posRecord:cc.Vec3;
+	private _widget:cc.Widget;
 	
 	protected onEnable():void{
 		super.onEnable();
-		this.node.setPosition(this._from);
+		//如果存在Widget组件，则手动调用对齐然后设置为不可用，否则会导致位置无法正常移动
+		this._widget=this.node.getComponent(cc.Widget);
+		if(this._widget){
+			this._widget.updateAlignment();
+			this._widget.enabled=false;
+		}
+		
+		this._posRecord=this.node.position;
+		this.node.position=this._from;
 		
 		cc.tween(this.node)
 			.to(this._duration,{ position: this._posRecord })
@@ -33,6 +36,12 @@ export default class MoveFrom extends BaseBehaviour{
 	}
 	
 	private onComplete():void{
+		//Widget组件对齐模式不为ONCE时恢复可用
+		if(this._widget){
+			if(this._widget.alignMode!=cc.Widget.AlignMode.ONCE){
+				this._widget.enabled=true;
+			}
+		}
 		this.node.emit(MoveFrom.COMPLETE);
 	}
 	

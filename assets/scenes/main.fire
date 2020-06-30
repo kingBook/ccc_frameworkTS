@@ -837,6 +837,8 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
     "_string": "Loading 90%......",
     "_N$string": "Loading 90%......",
@@ -1002,13 +1004,13 @@
       "y": -1000
     },
     "_enablePhysics2DDebugDraw": true,
+    "_musicVolume": 0.8,
+    "_effectsVolume": 1,
     "_games": [
       {
         "__id__": 4
       }
     ],
-    "_musicVolume": 0.8,
-    "_effectsVolume": 1,
     "_id": "00yE0+1XNDQpKTf9U5QWxU"
   }
 ]

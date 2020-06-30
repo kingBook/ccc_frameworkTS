@@ -2,6 +2,7 @@
 import BaseGame from "./BaseGame";
 import SceneLoader from "./SceneLoader";
 import SubpackageLoader from "./SubpackageLoader";
+import PlayerPrefs from "./PlayerPrefs";
 
 const {ccclass, property} = cc._decorator;
 
@@ -34,12 +35,12 @@ export default class App extends BaseBehaviour{
 	private _gravity2D:cc.Vec2=new cc.Vec2(0,-320);
 	@property({displayName:"　　　Debug Draw",visible:true})
 	private _enablePhysics2DDebugDraw:boolean=true;
-	@property({type:[BaseGame],visible:true})
-	private _games:BaseGame[]=[];
 	@property({range:[0,1],slide:true,visible:true,tooltip:"背景音乐音量"})
 	private _musicVolume:number=1;
 	@property({range:[0,1],slide:true,visible:true,tooltip:"音效音量"})
 	private _effectsVolume:number=1;
+	@property({type:[BaseGame],visible:true})
+	private _games:BaseGame[]=[];
 	
 	private _openCount:number;
 	private _isPause:boolean;
@@ -99,8 +100,8 @@ export default class App extends BaseBehaviour{
 	
 	private addOpenCount():void{
 		const key:string="applicationOpenCount";
-		this._openCount=parseInt(cc.sys.localStorage.getItem(key,0))+1;
-		cc.sys.localStorage.setItem(key,this._openCount);
+		this._openCount=PlayerPrefs.getInt(key,0)+1;
+		PlayerPrefs.setInt(key,this._openCount);
 	}
 	
 	/** 声音引擎扩展 */

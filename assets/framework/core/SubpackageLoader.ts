@@ -32,7 +32,7 @@ export default class SubpackageLoader extends BaseBehaviour{
 			this._frameCount=0;
 			this._virtualProgress=0;
 		}
-		cc.loader.downloader.loadSubpackage(subpackageName,(err:Error)=>{
+		cc.assetManager.loadBundle(subpackageName,(err:Error,bundle:cc.AssetManager.Bundle)=>{
 			if(progressVisible){
 				this._sceneProgressBar.node.active=false;
 				this._isLoading=false;//结束计算虚拟进度
