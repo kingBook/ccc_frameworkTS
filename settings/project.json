@@ -24,17 +24,17 @@
     "UI",
     "Player"
   ],
-  "start-scene": "2d2f792f-a40c-49bb-a189-ed176a246e49",
+  "start-scene": "fcf33ced-c004-4eaf-97e0-5f083d00ed43",
   "design-resolution-width": 960,
   "design-resolution-height": 640,
   "fit-width": false,
   "fit-height": true,
-  "use-project-simulator-setting": false,
-  "simulator-orientation": false,
+  "use-project-simulator-setting": true,
+  "simulator-orientation": true,
   "use-customize-simulator": true,
   "simulator-resolution": {
-    "height": 640,
-    "width": 960
+    "height": 480,
+    "width": 800
   },
   "last-module-event-record-time": 1577337497750,
   "assets-sort-type": "name",
@@ -50,5 +50,6 @@
   },
   "migrate-history": [
     "cloud-function"
-  ]
+  ],
+  "preview-port": 7456
 }
