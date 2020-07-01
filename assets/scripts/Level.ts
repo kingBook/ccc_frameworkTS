@@ -12,9 +12,13 @@ export default class Level extends BaseBehaviour{
 	
 	private _game:Game;
 	
-	protected start():void{
-		super.start();
+	protected onLoad():void{
+		super.onLoad();
 		this._game=App.instance.getGame<Game>();
+	}
+	
+	protected start():void{
+		
 	}
 	
 	public victory():void{
