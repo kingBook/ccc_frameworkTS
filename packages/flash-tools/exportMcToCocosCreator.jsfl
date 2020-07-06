@@ -8,36 +8,40 @@ var scriptDirectory=scriptURI.substring(0,scriptURI.lastIndexOf("/")+1);
 var exportFolderPath=scriptURI.substring(0,scriptURI.lastIndexOf("/packages")+1);
 //导出到CocosCreator项目文件夹内的文件夹路径
 exportFolderPath+="assets/textures";
+//最大的纹理限制
+var maxTextureSize={ width:2048, height:2048 };
+fl.outputPanel.clear();
 //--------------------------------------------------------------------------------------------
 var funcs={};
 funcs.exportMcToPng=function(callback){
 	if(selections&&selections.length>0){
-		var isHasExport=false;
+		var isExportComplete=false;
 		for(var i=0;i<selections.length;i++){
 			var element=selections[i];
 			if(element.elementType=="instance"){
 				if(element.instanceType=="symbol"){
-					funcs.exportSymbolItem(element);
-					isHasExport=true;
+					isExportComplete=funcs.exportSymbolItem(element);
 				}
 			}else{
-				alert("error: the selected object is not symbol");
+				alert("Error: the selected object is not symbol");
 			}
 		}
-		if(isHasExport){
-			alert("export complete");
+		if(isExportComplete){
+			alert("Export complete");
 			
 		}
 	}else{
-		alert("error: no object is selected");
+		alert("Error: no object is selected");
 	}
 }
 
 funcs.exportSymbolItem=function(element){
 	const linkageClassName=element.libraryItem.linkageClassName;
 	const elementName=element.name;
-	const libraryItemName=element.libraryItem.name;
+	
+	var libraryItemName=element.libraryItem.name;
 	libraryItemName=libraryItemName.substr(libraryItemName.lastIndexOf("\/")+1);
+	
 	//导出png的名称
 	var exportName=elementName?elementName:(linkageClassName?linkageClassName:libraryItemName);
 	//exportName+="png";
@@ -62,16 +66,16 @@ funcs.exportSymbolItem=function(element){
 		//还原选择项
 		document.selection=selections;
 	}else{*/
+		
 		//多帧时生成位图表
-		var maxSheetWidth=2048;
-		var maxSheetHeight=2048;
-		if(funcs.isOverflowed(element,maxSheetWidth,maxSheetHeight)){
-			funcs.exportEveryFrame(element,exportFolderPath,exportName);
+		if(funcs.isOverflowed(element,maxTextureSize.width,maxTextureSize.height)){
+			return funcs.exportEveryFrame(element,exportFolderPath,maxTextureSize.width,maxTextureSize.height,exportName);
 		}else{
 			funcs.deleteOldFile(filePath);
-			funcs.exportAllFrameToImage(element,filePath,maxSheetWidth,maxSheetHeight,exportName);
+			return funcs.exportAllFrameToImage(element,filePath,maxTextureSize.width,maxTextureSize.height,exportName);
 		}
 	//}
+	return false;
 }
 
 funcs.deleteOldFile=function(filePath){
@@ -92,10 +96,12 @@ funcs.deleteOldFile=function(filePath){
 funcs.exportAllFrameToImage=function(element,filePath,maxSheetWidth,maxSheetHeight,exportName){
 	var exporter=new SpriteSheetExporter();
 	exporter.addSymbol(element,0);
-	exporter.allowTrimming=false;
+	exporter.allowTrimming=true;
 	exporter.algorithm="basic";//basic | maxRects
 	exporter.layoutFormat="Starling";//Starling | JSON | cocos2D v2 | cocos2D v3
 	exporter.autoSize=true;
+	exporter.stackDuplicateFrames=true;
+	//exporter.allowRotate=true;
 	exporter.borderPadding=5;
 	exporter.shapePadding=5;
 	exporter.maxSheetWidth=maxSheetWidth;
@@ -103,11 +109,13 @@ funcs.exportAllFrameToImage=function(element,filePath,maxSheetWidth,maxSheetHeig
 	var imageFormat={format:"png",bitDepth:32,backgroundColor:"#00000000"};
 	exporter.exportSpriteSheet(filePath,imageFormat,true);
 	//生成.plist
-	funcs.generatePlist(filePath,exportName,exporter.sheetWidth,exporter.sheetHeight,true);
+	funcs.generatePlist(filePath,exportName,exportName,exporter.sheetWidth,exporter.sheetHeight,true,true);
+	return true;
 }
 
 //每帧一张图导出所有帧
-funcs.exportEveryFrame=function(element,exportFolderPath,exportName){
+funcs.exportEveryFrame=function(element,exportFolderPath,maxSheetWidth,maxSheetHeight,exportName){
+	var s=funcs.mulPngAnimXml_beginExport();
 	var frameCount=element.libraryItem.timeline.frameCount;
 	for(var i=0;i<frameCount;i++){
 		//帧编号字符串
@@ -124,29 +132,64 @@ funcs.exportEveryFrame=function(element,exportFolderPath,exportName){
 		funcs.deleteOldFile(filePath);
 		var exporter=new SpriteSheetExporter();
 		exporter.addSymbol(element,"",i,i+1);
-		exporter.allowTrimming=false;
+		exporter.allowTrimming=true;
 		exporter.algorithm="basic";//basic | maxRects
 		exporter.layoutFormat="Starling";//Starling | JSON | cocos2D v2 | cocos2D v3
 		exporter.autoSize=true;
+		exporter.stackDuplicateFrames=true;
+		//exporter.allowRotate=true;
 		exporter.borderPadding=5;
 		exporter.shapePadding=5;
-		exporter.maxSheetWidth=2048;
-		exporter.maxSheetHeight=2048;
-		var imageFormat={format:"png",bitDepth:32,backgroundColor:"#00000000"};
-		exporter.exportSpriteSheet(filePath,imageFormat,true);
-		//生成.plist
-		funcs.generatePlist(filePath,exportName,exporter.sheetWidth,exporter.sheetHeight,true);
+		exporter.maxSheetWidth=maxSheetWidth;
+		exporter.maxSheetHeight=maxSheetHeight;
+		
+		if(!exporter.overflowed){
+			var imageFormat={format:"png",bitDepth:32,backgroundColor:"#00000000"};
+			exporter.exportSpriteSheet(filePath,imageFormat,true);
+			//生成.plist
+			funcs.generatePlist(filePath,exportName+frameNOString,exportName,exporter.sheetWidth,exporter.sheetHeight,true,false);
+			s+=funcs.mulPngAnimXml_frameExport(exportName+frameNOString);
+		}else{
+			//单帧超出纹理大小限制
+			var errorMsg="Error: frame "+(i+1)+" of \'"+exportName+"\' exceeds the texture size limit of "+maxTextureSize.width+"x"+maxTextureSize.height+" cancelled";
+			fl.trace(errorMsg);
+			alert(errorMsg);
+			return false;
+		}
 	}
+	s+=funcs.mulPngAnimXml_EndExport();
+	//生成记录由多个png组成动画的xml
+	FLfile.write(exportFolderPath+"/"+exportName+".multipleImageAnim",s);
+	return true;
+}
+
+
+funcs.mulPngAnimXml_beginExport=function(){
+	var s = '<?xml version="1.0" encoding="utf-8"?>\n';
+	    s+= '<root>\n';
+	return s;
+}
+
+funcs.mulPngAnimXml_frameExport=function(frameName){
+	var s = '\t<name>'+frameName+'</name>\n';
+	return s;
+}
+
+funcs.mulPngAnimXml_EndExport=function(){
+	var	s = '</root>';
+	return s;
 }
 
 //导出所有帧时，是否超出指定大小
 funcs.isOverflowed=function(element,maxSheetWidth,maxSheetHeight){
 	var exporter=new SpriteSheetExporter();
 	exporter.addSymbol(element,0);
-	exporter.allowTrimming=false;
+	exporter.allowTrimming=true;
 	exporter.algorithm="basic";//basic | maxRects
 	exporter.layoutFormat="Starling";//Starling | JSON | cocos2D v2 | cocos2D v3
 	exporter.autoSize=true;
+	exporter.stackDuplicateFrames=true;
+	//exporter.allowRotate=true;
 	exporter.borderPadding=5;
 	exporter.shapePadding=5;
 	exporter.maxSheetWidth=maxSheetWidth;
@@ -154,7 +197,7 @@ funcs.isOverflowed=function(element,maxSheetWidth,maxSheetHeight){
 	return exporter.overflowed;
 }
 //--------------------------------------------------------------------------------------------
-funcs.generatePlist=function(filePath,exportName,sheetWidth,sheetHeight,isDelStarlingXml){
+funcs.generatePlist=function(filePath,exportName,metaFileName,sheetWidth,sheetHeight,isDelStarlingXml,isConnectFrameName){
 	var xmlPath=filePath+".xml";
 	var starlingXml=eval(FLfile.read(xmlPath).split( '\n' ).slice( 1 ).join( '\n' ));
 	
@@ -194,7 +237,7 @@ funcs.generatePlist=function(filePath,exportName,sheetWidth,sheetHeight,isDelSta
 		var poY=(height-pivotY-frameY)/height;
 		
 		var frame={
-			id:exportName+name,
+			id:(isConnectFrameName?exportName+name:exportName),
 			frame:{x:x,y:y,w:width,h:height},
 			offsetInSource:{x:-frameX,y:-frameY},
 			sourceSize:{w:frameWidth,h:frameHeight},
@@ -205,7 +248,7 @@ funcs.generatePlist=function(filePath,exportName,sheetWidth,sheetHeight,isDelSta
 	}
 	
 	var meta={
-		image:exportName+".png",
+		image:metaFileName+".png",
 		sheetWidth:sheetWidth,
 		sheetHeight:sheetHeight
 	};

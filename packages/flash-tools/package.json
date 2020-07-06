@@ -5,8 +5,8 @@
 	"author": "kingBook",
 	"main": "main.js",
 	"main-menu": {
-		"Tools/Create anim with plist":{
-			"message":"flash-tools:create-anim"
+		"Tools/Create anim with config":{
+			"message":"flash-tools:menu-create-anim"
 		}
 	}
 }
