@@ -991,8 +991,12 @@
     },
     "_enabled": true,
     "_language": 0,
-    "_sceneLoader": null,
-    "_subpackageLoader": null,
+    "_sceneLoader": {
+      "__id__": 4
+    },
+    "_subpackageLoader": {
+      "__id__": 20
+    },
     "_enablePhysics2D": false,
     "_gravity2D": {
       "__type__": "cc.Vec2",

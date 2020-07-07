@@ -23,14 +23,14 @@ export default class CameraFollow2D extends BaseBehaviour{
 	private _worldPosMin:cc.Vec2=cc.Vec2.ZERO
 	@property({displayName:"　　　　Use Node",visible:true,tooltip:"勾选后将在onLoad时将使用节点的世界坐标覆盖World Position Min的值"})
 	private _isUseWorldMinNode:boolean=false;
-	@property({displayName:" ",type:cc.Node,visible:true})
+	@property({displayName:" ",type:cc.Node,visible(){return this._isUseWorldMinNode}})
 	private _worldMinNode:cc.Node=null;
 	
 	@property({displayName:"World Position Max",visible:true,tooltip:"world的右上角"})
 	private _worldPosMax:cc.Vec2=cc.v2(1e5,1e5);
 	@property({displayName:"　　　　Use Node",visible:true,tooltip:"勾选后将在onLoad时将使用节点的世界坐标覆盖World Position Max的值"})
 	private _isUseWorldMaxNode:boolean=false;
-	@property({displayName:" ",type:cc.Node,visible:true})
+	@property({displayName:" ",type:cc.Node,visible(){return this._isUseWorldMaxNode}})
 	private _worldMaxNode:cc.Node=null;
 	
 	private _camera:cc.Camera;

@@ -30,10 +30,9 @@ export default class App extends BaseBehaviour{
 	private _subpackageLoader:SubpackageLoader=null;
 	@property({visible:true})
 	private _enablePhysics2D:boolean=false;
-	@property({visible:true})
-	@property({displayName:"　　　Gravity",visible:true})
+	@property({displayName:"　　　Gravity",visible(){return this._enablePhysics2D;}})
 	private _gravity2D:cc.Vec2=new cc.Vec2(0,-320);
-	@property({displayName:"　　　Debug Draw",visible:true})
+	@property({displayName:"　　　Debug Draw",visible(){return this._enablePhysics2D;}})
 	private _enablePhysics2DDebugDraw:boolean=true;
 	@property({range:[0,1],slide:true,visible:true,tooltip:"背景音乐音量"})
 	private _musicVolume:number=1;
