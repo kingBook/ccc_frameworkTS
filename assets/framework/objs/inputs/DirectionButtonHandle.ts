@@ -2,9 +2,28 @@
 
 const{ccclass,property}=cc._decorator;
 
-/** 方向按钮手柄 */
+/**
+ * 方向按钮手柄
+ * @property {cc.Vec2}  directionNormalized 表示按下的方向x和y的值只能是1或-1（每一帧都更新）。
+ * @event {string} PRESS_ONCE (任何一个方向键按下时派发事件一次，松开再按下再派发一次事件)。
+ * 	例：
+ * ```
+ * this.directionButtonHandle.node.on(DirectionButtonHandle.PRESS_ONCE,function(directionNormalized:cc.Vec2):void{
+ * 	if(directionNormalized.y<0){
+ * 		
+ * 	}
+ * },this);
+ * ```
+ */
 @ccclass
 export default class DirectionButtonHandle extends BaseBehaviour{
+	
+	/** 按下一次事件，回调函数格式：
+	 * ```
+	 * (directionNormalized:cc.Vec2):void
+	 * ```
+	 */
+	public static readonly PRESS_ONCE:string="pressOnce";
 	
 	private static readonly LEFT:number =0x0001;
 	private static readonly RIGHT:number=0x0002;
@@ -67,12 +86,24 @@ export default class DirectionButtonHandle extends BaseBehaviour{
 		let isUp=this._buttonUp!=null&&event.target==this._buttonUp.node;
 		let isDown=this._buttonDown!=null&&event.target==this._buttonDown.node;
 		if(isLeft){
+			if((this._pressKeyFlags&DirectionButtonHandle.LEFT)===0){
+				this.node.emit(DirectionButtonHandle.PRESS_ONCE,new cc.Vec2(-1,0));
+			}
 			this._pressKeyFlags|=DirectionButtonHandle.LEFT;
 		}else if(isRight){
+			if((this._pressKeyFlags&DirectionButtonHandle.RIGHT)===0){
+				this.node.emit(DirectionButtonHandle.PRESS_ONCE,new cc.Vec2(1,0));
+			}
 			this._pressKeyFlags|=DirectionButtonHandle.RIGHT;
 		}else if(isUp){
+			if((this._pressKeyFlags&DirectionButtonHandle.UP)===0){
+				this.node.emit(DirectionButtonHandle.PRESS_ONCE,new cc.Vec2(0,1));
+			}
 			this._pressKeyFlags|=DirectionButtonHandle.UP;
 		}else if(isDown){
+			if((this._pressKeyFlags&DirectionButtonHandle.DOWN)===0){
+				this.node.emit(DirectionButtonHandle.PRESS_ONCE,new cc.Vec2(0,-1));
+			}
 			this._pressKeyFlags|=DirectionButtonHandle.DOWN;
 		}
 		this.updateDirectionNormalized();
