@@ -15,6 +15,14 @@ export default class SceneProgressBar extends BaseBehaviour{
 	protected onEnable():void{
 		super.onEnable();
 		//当前节点不在Canvas内，每次激活重新计算大小和缩放
+		this.resize();
+	}
+	
+	protected update():void{
+		this.resize();
+	}
+	
+	private resize():void{
 		let winSize=cc.winSize;
 		this.node.setPosition(winSize.width*0.5,winSize.height*0.5);
 		this.node.scale=winSize.width/960;
