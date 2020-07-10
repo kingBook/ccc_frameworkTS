@@ -15,6 +15,8 @@ export default class Character extends BaseBehaviour{
 	@property({visible:true})
 	private _speedX:number=250;
 	@property({visible:true})
+	private _jumpImpluseY:number=1100;
+	@property({visible:true})
 	private _frictionX:number=0.9;
 	@property({visible:true,tooltip:"动画外观默认的朝向：1（右）/-1（左）"})
 	private _skinFaceOrientation:number=1;
@@ -221,7 +223,7 @@ export default class Character extends BaseBehaviour{
 		if(this._isInAir)return;
 		if(this._isJumping)return;
 		this._isJumping=true;
-		let impluse=new cc.Vec2(0,1000*this._rigidBody.getMass());
+		let impluse=new cc.Vec2(0,this._jumpImpluseY*this._rigidBody.getMass());
 		this._rigidBody.applyLinearImpulse(impluse,this._rigidBody.getWorldCenter(),true);
 		this.playAnimationClip(this._jumpUpClipKey);
 	}
