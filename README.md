@@ -17,3 +17,5 @@ Project Settings => GroupManager 设置问题
 
 		
 cc.ScrollView:scroll-to-top/bottom/left/right 事件无反应
+
+播放动画时，即使判断了currentClip.name与当前需要播放的clip不一样，在clip的结尾处也可能会出现多次播放同一clip而无法进入的问题

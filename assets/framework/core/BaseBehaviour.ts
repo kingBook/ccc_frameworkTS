@@ -52,6 +52,10 @@ export default abstract class BaseBehaviour extends cc.Component{
 		//super.onPostSolve(contact,selfCollider,otherCollider);
 	}
 	
+	/** 是否正在调度中... */
+	protected isScheduling(callback:Function):boolean{
+		return cc.director.getScheduler().isScheduled(callback,this);
+	}
 	
 	/** 当该组件被禁用或节点变为无效时调用 */
 	protected onDisable():void{
