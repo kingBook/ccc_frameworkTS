@@ -13,7 +13,7 @@ var maxTextureSize={ width:2048, height:2048 };
 fl.outputPanel.clear();
 //--------------------------------------------------------------------------------------------
 var funcs={};
-funcs.exportMcToPng=function(callback){
+funcs.exportMcToPng=function(){
 	if(selections&&selections.length>0){
 		var isExportComplete=false;
 		for(var i=0;i<selections.length;i++){
@@ -28,7 +28,6 @@ funcs.exportMcToPng=function(callback){
 		}
 		if(isExportComplete){
 			alert("Export complete");
-			
 		}
 	}else{
 		alert("Error: no object is selected");
@@ -44,7 +43,6 @@ funcs.exportSymbolItem=function(element){
 	
 	//导出png的名称
 	var exportName=elementName?elementName:(linkageClassName?linkageClassName:libraryItemName);
-	//exportName+="png";
 	const filePath=exportFolderPath+"/"+exportName;
 	
 	if(FLfile.createFolder(exportFolderPath)){
@@ -67,12 +65,12 @@ funcs.exportSymbolItem=function(element){
 		document.selection=selections;
 	}else{*/
 		
-		//多帧时生成位图表
-		if(funcs.isOverflowed(element,maxTextureSize.width,maxTextureSize.height)){
-			return funcs.exportEveryFrame(element,exportFolderPath,maxTextureSize.width,maxTextureSize.height,exportName);
+		//生成位图表
+		if(funcs.isOverflowed(element)){
+			return funcs.exportEveryFrame(element,exportFolderPath,exportName);
 		}else{
 			funcs.deleteOldFile(filePath);
-			return funcs.exportAllFrameToImage(element,filePath,maxTextureSize.width,maxTextureSize.height,exportName);
+			return funcs.exportAllFrameToImage(element,filePath,exportName);
 		}
 	//}
 	return false;
@@ -93,19 +91,10 @@ funcs.deleteOldFile=function(filePath){
 }
 
 //所有帧导出为一张图
-funcs.exportAllFrameToImage=function(element,filePath,maxSheetWidth,maxSheetHeight,exportName){
+funcs.exportAllFrameToImage=function(element,filePath,exportName){
 	var exporter=new SpriteSheetExporter();
 	exporter.addSymbol(element,0);
-	exporter.allowTrimming=true;
-	exporter.algorithm="basic";//basic | maxRects
-	exporter.layoutFormat="Starling";//Starling | JSON | cocos2D v2 | cocos2D v3
-	exporter.autoSize=true;
-	exporter.stackDuplicateFrames=true;
-	//exporter.allowRotate=true;
-	exporter.borderPadding=5;
-	exporter.shapePadding=5;
-	exporter.maxSheetWidth=maxSheetWidth;
-	exporter.maxSheetHeight=maxSheetHeight;
+	funcs.setSpriteSheetExporter(exporter);
 	var imageFormat={format:"png",bitDepth:32,backgroundColor:"#00000000"};
 	exporter.exportSpriteSheet(filePath,imageFormat,true);
 	//生成.plist
@@ -114,9 +103,23 @@ funcs.exportAllFrameToImage=function(element,filePath,maxSheetWidth,maxSheetHeig
 }
 
 //每帧一张图导出所有帧
-funcs.exportEveryFrame=function(element,exportFolderPath,maxSheetWidth,maxSheetHeight,exportName){
+funcs.exportEveryFrame=function(element,exportFolderPath,exportName){
 	var s=funcs.mulPngAnimXml_beginExport();
 	var frameCount=element.libraryItem.timeline.frameCount;
+	//先检查是否存在帧大小纹理大小限制
+	for(var i=0;i<frameCount;i++){
+		var exporter=new SpriteSheetExporter();
+		exporter.addSymbol(element,"",i,i+1);
+		funcs.setSpriteSheetExporter(exporter);
+		if(exporter.overflowed){
+			//单帧超出纹理大小限制
+			var errorMsg="Error: frame "+(i+1)+" of \'"+exportName+"\' exceeds the texture size limit of "+exporter.maxSheetWidth+"x"+exporter.maxSheetHeight+" cancelled";
+			fl.trace(errorMsg);
+			alert(errorMsg);
+			return false;
+		}
+	}
+	//导出每一帧
 	for(var i=0;i<frameCount;i++){
 		//帧编号字符串
 		var frameNOString=i+"";
@@ -132,30 +135,13 @@ funcs.exportEveryFrame=function(element,exportFolderPath,maxSheetWidth,maxSheetH
 		funcs.deleteOldFile(filePath);
 		var exporter=new SpriteSheetExporter();
 		exporter.addSymbol(element,"",i,i+1);
-		exporter.allowTrimming=true;
-		exporter.algorithm="basic";//basic | maxRects
-		exporter.layoutFormat="Starling";//Starling | JSON | cocos2D v2 | cocos2D v3
-		exporter.autoSize=true;
-		exporter.stackDuplicateFrames=true;
-		//exporter.allowRotate=true;
-		exporter.borderPadding=5;
-		exporter.shapePadding=5;
-		exporter.maxSheetWidth=maxSheetWidth;
-		exporter.maxSheetHeight=maxSheetHeight;
+		funcs.setSpriteSheetExporter(exporter);
 		
-		if(!exporter.overflowed){
-			var imageFormat={format:"png",bitDepth:32,backgroundColor:"#00000000"};
-			exporter.exportSpriteSheet(filePath,imageFormat,true);
-			//生成.plist
-			funcs.generatePlist(filePath,exportName+frameNOString,exportName,exporter.sheetWidth,exporter.sheetHeight,true,false);
-			s+=funcs.mulPngAnimXml_frameExport(exportName+frameNOString);
-		}else{
-			//单帧超出纹理大小限制
-			var errorMsg="Error: frame "+(i+1)+" of \'"+exportName+"\' exceeds the texture size limit of "+maxTextureSize.width+"x"+maxTextureSize.height+" cancelled";
-			fl.trace(errorMsg);
-			alert(errorMsg);
-			return false;
-		}
+		var imageFormat={format:"png",bitDepth:32,backgroundColor:"#00000000"};
+		exporter.exportSpriteSheet(filePath,imageFormat,true);
+		//生成.plist
+		funcs.generatePlist(filePath,exportName+frameNOString,exportName,exporter.sheetWidth,exporter.sheetHeight,true,false);
+		s+=funcs.mulPngAnimXml_frameExport(exportName+frameNOString);
 	}
 	s+=funcs.mulPngAnimXml_EndExport();
 	//生成记录由多个png组成动画的xml
@@ -181,9 +167,14 @@ funcs.mulPngAnimXml_EndExport=function(){
 }
 
 //导出所有帧时，是否超出指定大小
-funcs.isOverflowed=function(element,maxSheetWidth,maxSheetHeight){
+funcs.isOverflowed=function(element){
 	var exporter=new SpriteSheetExporter();
 	exporter.addSymbol(element,0);
+	funcs.setSpriteSheetExporter(exporter);
+	return exporter.overflowed;
+}
+
+funcs.setSpriteSheetExporter=function(exporter){
 	exporter.allowTrimming=true;
 	exporter.algorithm="basic";//basic | maxRects
 	exporter.layoutFormat="Starling";//Starling | JSON | cocos2D v2 | cocos2D v3
@@ -192,9 +183,8 @@ funcs.isOverflowed=function(element,maxSheetWidth,maxSheetHeight){
 	//exporter.allowRotate=true;
 	exporter.borderPadding=5;
 	exporter.shapePadding=5;
-	exporter.maxSheetWidth=maxSheetWidth;
-	exporter.maxSheetHeight=maxSheetHeight;
-	return exporter.overflowed;
+	exporter.maxSheetWidth=maxTextureSize.width;
+	exporter.maxSheetHeight=maxTextureSize.height;
 }
 //--------------------------------------------------------------------------------------------
 funcs.generatePlist=function(filePath,exportName,metaFileName,sheetWidth,sheetHeight,isDelStarlingXml,isConnectFrameName){
