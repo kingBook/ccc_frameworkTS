@@ -115,7 +115,7 @@ export default class Character extends BaseBehaviour{
 			if(otherCollider.sensor)continue;
 			let worldManifold=contact.getWorldManifold();
 			let normal=worldManifold.normal;
-			if(contact.colliderA.body!=this._rigidBody)normal.mulSelf(-1);
+			normal.mulSelf(-1);
 			if(normal.y>0.7){
 				inAir=false;
 				break;
