@@ -1,0 +1,29 @@
+{
+	"__type__": "cc.AnimationClip",
+	"_name": "arrow",
+	"_objFlags": 0,
+	"_native": "",
+	"_duration": 0.041666666666666664,
+	"sample": 24,
+	"speed": 1,
+	"wrapMode": 2,
+	"curveData": {
+		"comps": {
+			"cc.Sprite": {
+				"spriteFrame": [
+					{
+						"frame": 0,
+						"value": {
+							"__uuid__": "d62ff0bc-3f29-4ead-80f9-191577afb77d"
+						}
+					}
+				]
+			}
+		},
+		"props": {
+			"anchorX": [],
+			"anchorY": []
+		}
+	},
+	"events": []
+}

@@ -1,0 +1,57 @@
+{
+	"__type__": "cc.AnimationClip",
+	"_name": "切换",
+	"_objFlags": 0,
+	"_native": "",
+	"_duration": 0.08333333333333333,
+	"sample": 24,
+	"speed": 1,
+	"wrapMode": 2,
+	"curveData": {
+		"comps": {
+			"cc.Sprite": {
+				"spriteFrame": [
+					{
+						"frame": 0,
+						"value": {
+							"__uuid__": "e1e77a14-f9c6-4908-a3f7-cf861e09f30e"
+						}
+					},
+					{
+						"frame": 0.041666666666666664,
+						"value": {
+							"__uuid__": "f0641bb5-a2b1-472a-a91c-c62cf179c2b0"
+						}
+					}
+				]
+			}
+		},
+		"props": {
+			"anchorX": [
+				{
+					"frame": 0,
+					"value": 0.49950248756218907,
+					"curve": "constant"
+				},
+				{
+					"frame": 0.041666666666666664,
+					"value": 0.49950248756218907,
+					"curve": "constant"
+				}
+			],
+			"anchorY": [
+				{
+					"frame": 0,
+					"value": 0.5007462686567165,
+					"curve": "constant"
+				},
+				{
+					"frame": 0.041666666666666664,
+					"value": 0.5007462686567165,
+					"curve": "constant"
+				}
+			]
+		}
+	},
+	"events": []
+}

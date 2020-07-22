@@ -27,6 +27,8 @@ module.exports={
 		this.queryMultipleImageConfigAndCreateAnim();
 		
 		this.queryAtlasAndCreateAnim();
+		
+		//this.queryAtlasAndMergeToRawTextureMeta();
 	},
 	
 	/** 查询多张图动画配置文件(.multipleImageAnim)并创建动画 */
@@ -264,7 +266,7 @@ module.exports={
 		return decompressUuid;
 	},
 	
-	/** 查询纹理集并创建动画 */
+	/** 查询纹理集（.plist文件）并创建动画 */
 	queryAtlasAndCreateAnim(){
 		Editor.assetdb.queryAssets('db://assets/textures/**\/*','sprite-atlas',(err,results)=>{
 			results.forEach((result)=>{
@@ -280,6 +282,45 @@ module.exports={
 			});
 		});
 	},
+	
+	/** 查询纹理集（.plist文件）并合并到.png.meta */
+	/*queryAtlasAndMergeToRawTextureMeta(){
+		Editor.assetdb.queryAssets('db://assets/textures/**\/*','sprite-atlas',(err,results)=>{
+			results.forEach((result)=>{
+				// result.url
+				// result.path
+				// result.uuid
+				// result.type
+				// result.isSubAsset
+				Editor.log(result.path);
+				//读取.plist.meta
+				let plistMetaPath=result.path+".meta"
+				let plistMetaStrings=fs.readFileSync(plistMetaPath,'utf8');
+				let plistMetaData=JSON.parse(plistMetaStrings);
+				//Editor.log(plistMetaData);
+				//Editor.log(plistMetaData.rawTextureUuid);
+				//Editor.log(plistMetaData.subMetas);
+				
+				//读取图集（.plist）的源图像的.png.meta
+				let rawTextureUuid=plistMetaData.rawTextureUuid;
+				let rawTextureMetaPath=Editor.assetdb.uuidToFspath(rawTextureUuid)+".meta";
+				if(fs.existsSync(rawTextureMetaPath)){
+					let rawTextureMetaStrings=fs.readFileSync(rawTextureMetaPath,'utf8');
+					let rawTextureMetaData=JSON.parse(rawTextureMetaStrings);
+					Editor.log(rawTextureMetaData);
+					if(rawTextureMetaData.type=="raw"){
+						rawTextureMetaData.type="sprite";
+						rawTextureMetaData.subMetas=plistMetaData.subMetas;
+						//保存.png.meta到本地
+						rawTextureMetaStrings=JSON.stringify(rawTextureMetaData,null,"\t");
+						Editor.assetdb.saveMeta(rawTextureMetaData.uuid,rawTextureMetaStrings,(err,meta)=>{});
+						//删除.plist和.plist.meta
+						Editor.assetdb.delete([result.url]);
+					}
+				}
+			});
+		});
+	},*/
 	
 	/**
 	 * 根据指定的纹理集Url创建动画
