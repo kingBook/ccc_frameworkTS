@@ -3,6 +3,7 @@ import BaseGame from "./BaseGame";
 import SceneLoader from "./SceneLoader";
 import SubpackageLoader from "./SubpackageLoader";
 import PlayerPrefs from "./PlayerPrefs";
+import DebugDraw from "./DebugDraw";
 
 const {ccclass, property} = cc._decorator;
 
@@ -28,6 +29,8 @@ export default class App extends BaseBehaviour{
 	private _sceneLoader:SceneLoader=null;
 	@property({type:SubpackageLoader,visible:true})
 	private _subpackageLoader:SubpackageLoader=null;
+	@property({type:DebugDraw,visible:true})
+	private _debugDraw:DebugDraw=null;
 	@property({visible:true})
 	private _enablePhysics2D:boolean=false;
 	@property({displayName:"　　　Gravity",visible(){return this._enablePhysics2D;}})
@@ -55,6 +58,10 @@ export default class App extends BaseBehaviour{
 	/** 分包加载器 */
 	public get subpackageLoader():SubpackageLoader{
 		return this._subpackageLoader;
+	}
+	/** 调试绘画 */
+	public get debugDraw():DebugDraw{
+		return this._debugDraw;
 	}
 	/** 应用打开的次数 */
 	public get openCount():number{

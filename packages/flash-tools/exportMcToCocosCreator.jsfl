@@ -19,11 +19,16 @@ funcs.exportMcToPng=function(){
 		for(var i=0;i<selections.length;i++){
 			var element=selections[i];
 			if(element.elementType=="instance"){
-				if(element.instanceType=="symbol"){
+				if(element.instanceType=="symbol"){//MovieClip、Button、Graphic
 					isExportComplete=funcs.exportSymbolItem(element);
+				}else if(element.instanceType=="bitmap"){
+					//isExportComplete=funcs.exportSymbolItem(element);
+					fl.trace("bitmap:"+element.libraryItem.linkageClassName+','+element.libraryItem.name);
 				}
+			}else if(element.elementType=="shape"){
+				fl.trace("shape:"+element.name);
 			}else{
-				alert("Error: the selected object is not symbol");
+				alert("Error: unknown element type '"+element.elementType+"'");
 			}
 		}
 		if(isExportComplete){

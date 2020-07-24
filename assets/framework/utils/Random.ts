@@ -37,4 +37,52 @@ export default class Random{
 		return Math.random()*(max-min)+min;
 	}
 	
+	/** 随机打乱一个数组的所有元素，并返回一个打乱后的新数组*/
+	public static randomArrayElements(array:any[]):any[]{
+		let len=array.length;
+		let randomIndices=Random.getRandomUniqueIntList(0,len,len);
+		let tempArray=[];
+		for(let i=0;i<len;i++){
+			let randomIndex=randomIndices[i];
+			tempArray[i]=array[randomIndex];
+		}
+		return tempArray;
+	}
+	
+	/**
+	 * 返回一个指定长度的随机int数组，数组元素范围是在[min,max)区间内(包括min,排除max)不重复的整数。
+	 * 注意：参数length的取值范围必须在[1,max-min]区间内，length小于1时取值：1，length大于max-min时取值：max-min。
+	 * 例：
+	 * ```
+	 * getRandomUniqueIntList(0,10,10); //返回元素在[0,10)之间，长度为10的数组
+	 * ```
+	 * @param min int
+	 * @param max int
+	 * @param length int
+	 */
+	public static getRandomUniqueIntList(min:number,max:number,length:number):number[]{
+		min|=0;
+		max|=0;
+		length|=0;
+		
+		let sourceLength=max-min;
+		length=Math.min(Math.max(length,1),sourceLength);
+
+		let results=[];
+		
+		let sourceList=[];
+		let i=0;
+		for(i=0;i<sourceLength;i++){
+			sourceList[i]=min+i;
+		}
+
+		let randomIndex=0;
+		for(i=0;i<length;i++){
+			randomIndex=Random.rangeInt(0,sourceList.length);
+			results[i]=sourceList[randomIndex];
+			sourceList.splice(randomIndex,1);
+		}
+		return results;
+	}
+	
 }

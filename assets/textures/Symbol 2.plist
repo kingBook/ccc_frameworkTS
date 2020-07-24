@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>Symbol 200000</key>
+			<dict>
+				<key>frame</key>
+				<string>{{5,5},{86,60}}</string>
+				<key>offset</key>
+				<string>{0,-6}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,10},{86,60}}</string>
+				<key>sourceSize</key>
+				<string>{86,60}</string>
+				<key>anchor</key>
+				<string>{0.5,0.5}</string>
+			</dict>
+			<key>Symbol 200001</key>
+			<dict>
+				<key>frame</key>
+				<string>{{5,70},{70,70}}</string>
+				<key>offset</key>
+				<string>{-7,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{16,0},{70,70}}</string>
+				<key>sourceSize</key>
+				<string>{70,70}</string>
+				<key>anchor</key>
+				<string>{0.5142857142857142,0.4857142857142857}</string>
+			</dict>
+			<key>Symbol 200002</key>
+			<dict>
+				<key>frame</key>
+				<string>{{5,145},{52,70}}</string>
+				<key>offset</key>
+				<string>{-7,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{34,0},{52,70}}</string>
+				<key>sourceSize</key>
+				<string>{52,70}</string>
+				<key>anchor</key>
+				<string>{0.6923076923076923,0.4857142857142857}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>realTextureFileName</key>
+			<string>Symbol 2.png</string>
+			<key>size</key>
+			<string>{128,256}</string>
+			<key>textureFileName</key>
+			<string>Symbol 2.png</string>
+		</dict>
+	</dict>
+</plist>

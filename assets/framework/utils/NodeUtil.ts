@@ -36,6 +36,24 @@
 	}
 	
 	/**
+	 * 获取 parentNode 坐标系下的 localPosition 位置在世界坐标系下的位置（单位：像素）
+	 * @param parentNode 
+	 * @param localPosition parentNode 坐标系下的位置
+	 */
+	public static getWorldPositionV2UnderLocal(parentNode:cc.Node,localPosition:cc.Vec2){
+		return parentNode.convertToWorldSpaceAR(localPosition);
+	}
+	
+	/**
+	 * 获取 parentNode 坐标系下的 localPosition 位置在世界坐标系下的位置（单位：像素）
+	 * @param parentNode 
+	 * @param localPosition parentNode 坐标系下的位置
+	 */
+	public static getWorldPositionV3UnderLocal(parentNode:cc.Node,localPosition:cc.Vec3):cc.Vec3{
+		return parentNode.convertToWorldSpaceAR(localPosition);
+	}
+	
+	/**
 	 * 获取node原点在世界坐标系下的位置（单位：像素）
 	 * @param node 
 	 */
@@ -67,6 +85,28 @@
 	 */
 	public static getLocalPositionV3(node:cc.Node,worldPosition:cc.Vec3):cc.Vec3{
 		return node.convertToNodeSpaceAR(worldPosition);
+	}
+	
+	/**
+	 * 获取 parentNode 坐标系的 localPosition 位置在 targetNode 坐标系下的位置（单位：像素）
+	 * @param parentNode 
+	 * @param localPosition parentNode 坐标系下的位置
+	 * @param targetNode
+	 */
+	public static getLocalPositionV2UnderLocal(parentNode:cc.Node,localPosition:cc.Vec2,targetNode:cc.Node):cc.Vec2{
+		let worldPosition=parentNode.convertToWorldSpaceAR(localPosition);
+		return targetNode.convertToNodeSpaceAR(worldPosition);
+	}
+	
+	/**
+	 * 获取 parentNode 坐标系的 localPosition 位置在 targetNode 坐标系下的位置（单位：像素）
+	 * @param parentNode 
+	 * @param localPosition parentNode 坐标系下的位置
+	 * @param targetNode
+	 */
+	public static getLocalPositionV3UnderLocal(parentNode:cc.Node,localPosition:cc.Vec3,targetNode:cc.Node):cc.Vec3{
+		let worldPosition=parentNode.convertToWorldSpaceAR(localPosition);
+		return targetNode.convertToNodeSpaceAR(worldPosition);
 	}
 	
 	/**
