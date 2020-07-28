@@ -20,10 +20,9 @@ funcs.exportMcToPng=function(){
 			var element=selections[i];
 			if(element.elementType=="instance"){
 				if(element.instanceType=="symbol"){//MovieClip、Button、Graphic
-					isExportComplete=funcs.exportSymbolItem(element);
+					isExportComplete=funcs.exportSymbolElement(element);
 				}else if(element.instanceType=="bitmap"){
-					//isExportComplete=funcs.exportSymbolItem(element);
-					fl.trace("bitmap:"+element.libraryItem.linkageClassName+','+element.libraryItem.name);
+					isExportComplete=funcs.exportBitmapElement(element,i);
 				}
 			}else if(element.elementType=="shape"){
 				fl.trace("shape:"+element.name);
@@ -39,7 +38,48 @@ funcs.exportMcToPng=function(){
 	}
 }
 
-funcs.exportSymbolItem=function(element){
+funcs.exportBitmapElement=function(element,selectionIndex){
+	const linkageClassName=element.libraryItem.linkageClassName;
+	
+	var libraryItemName=element.libraryItem.name;
+	libraryItemName=libraryItemName.substr(libraryItemName.lastIndexOf("\/")+1);
+	
+	//导出png的名称
+	var exportName=linkageClassName?linkageClassName:libraryItemName;
+	const filePath=exportFolderPath+"/"+exportName;
+	
+	//funcs.deleteOldFile(filePath);
+	//exportInstanceToPNGSequence方法，只允许选中一个
+	document.selectNone();
+	element.selected=true;
+	var mc=document.convertToSymbol("movie clip","","center");
+	fl.trace(document.selection[0]);
+	fl.trace(element);
+	fl.trace(mc);
+	//document.breakApart();//打散
+	
+	//funcs.exportSymbolElement(mc);
+	//只有一帧时，直接导出位图
+	//document.exportInstanceToPNGSequence(filePath+".png");
+	
+	//创建空的xml，使unity能正确的改变纹理类型
+	//FLfile.write(filePath+".xml","<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<TextureAtlas imagePath=\""+exportName+".png"+"\"></TextureAtlas>");
+	//还原选择项
+	//document.selection=selections;
+	
+	
+	
+	
+}
+
+funcs.convertToSymbol=function(element,selectionIndex,isReplaceSelection){
+	document.selectNone();
+	element.selected=true;
+	document.convertToSymbol("movie clip","","center");
+	selections[selectionIndex]=document.selection[0];
+}
+
+funcs.exportSymbolElement=function(element){
 	const linkageClassName=element.libraryItem.linkageClassName;
 	const elementName=element.name;
 	
