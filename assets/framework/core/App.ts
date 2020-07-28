@@ -1,4 +1,5 @@
-﻿import BaseBehaviour from "./BaseBehaviour";
+﻿import "../extensions/Extensions";
+import BaseBehaviour from "./BaseBehaviour";
 import BaseGame from "./BaseGame";
 import SceneLoader from "./SceneLoader";
 import SubpackageLoader from "./SubpackageLoader";
