@@ -1,6 +1,8 @@
 'use strict';
 var fs=require('fs');
 var xml2js = require('xml2js');
+/** 单帧是否创建动画 */
+var isSingleFrameCreateAnim=true;
 
 module.exports={
 	
@@ -358,7 +360,7 @@ module.exports={
 		//Editor.log(JSON.stringify(frameDatas,null,"\t"));
 		//Editor.log(JSON.stringify(frameDatas.dict,null,"\t"));
 		
-		if(keys.length<2)return null;//只有一帧不创建动画
+		if(!isSingleFrameCreateAnim&&keys.length<=1)return null;//单帧不创建动画
 		
 		let animData={
 			"__type__":"cc.AnimationClip",

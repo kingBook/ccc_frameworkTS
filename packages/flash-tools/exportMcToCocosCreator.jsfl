@@ -22,10 +22,20 @@ funcs.exportMcToPng=function(){
 				if(element.instanceType=="symbol"){//MovieClip、Button、Graphic
 					isExportComplete=funcs.exportSymbolElement(element);
 				}else if(element.instanceType=="bitmap"){
-					isExportComplete=funcs.exportBitmapElement(element,i);
+					//const linkageClassName=element.libraryItem.linkageClassName;
+	
+					//var libraryItemName=element.libraryItem.name;
+					//libraryItemName=libraryItemName.substr(libraryItemName.lastIndexOf("\/")+1);
+					
+					//导出png的名称
+					//var exportName=linkageClassName?linkageClassName:libraryItemName;
+					//const filePath=exportFolderPath+"/"+exportName;
+					var bitmapSymbol=funcs.convertToSymbol(element,i,true);
+					isExportComplete=funcs.exportSymbolElement(bitmapSymbol);
 				}
 			}else if(element.elementType=="shape"){
-				fl.trace("shape:"+element.name);
+				var shapeSymbol=funcs.convertToSymbol(element,i,true);
+				isExportComplete=funcs.exportSymbolElement(shapeSymbol);
 			}else{
 				alert("Error: unknown element type '"+element.elementType+"'");
 			}
@@ -38,45 +48,17 @@ funcs.exportMcToPng=function(){
 	}
 }
 
-funcs.exportBitmapElement=function(element,selectionIndex){
-	const linkageClassName=element.libraryItem.linkageClassName;
-	
-	var libraryItemName=element.libraryItem.name;
-	libraryItemName=libraryItemName.substr(libraryItemName.lastIndexOf("\/")+1);
-	
-	//导出png的名称
-	var exportName=linkageClassName?linkageClassName:libraryItemName;
-	const filePath=exportFolderPath+"/"+exportName;
-	
-	//funcs.deleteOldFile(filePath);
-	//exportInstanceToPNGSequence方法，只允许选中一个
-	document.selectNone();
-	element.selected=true;
-	var mc=document.convertToSymbol("movie clip","","center");
-	fl.trace(document.selection[0]);
-	fl.trace(element);
-	fl.trace(mc);
-	//document.breakApart();//打散
-	
-	//funcs.exportSymbolElement(mc);
-	//只有一帧时，直接导出位图
-	//document.exportInstanceToPNGSequence(filePath+".png");
-	
-	//创建空的xml，使unity能正确的改变纹理类型
-	//FLfile.write(filePath+".xml","<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<TextureAtlas imagePath=\""+exportName+".png"+"\"></TextureAtlas>");
-	//还原选择项
-	//document.selection=selections;
-	
-	
-	
-	
-}
-
 funcs.convertToSymbol=function(element,selectionIndex,isReplaceSelection){
 	document.selectNone();
 	element.selected=true;
 	document.convertToSymbol("movie clip","","center");
-	selections[selectionIndex]=document.selection[0];
+	var currentElement=document.selection[0];
+	if(isReplaceSelection){
+		selections[selectionIndex]=currentElement;
+	}
+	//还原选择项
+	document.selection=selections;
+	return currentElement;
 }
 
 funcs.exportSymbolElement=function(element){
@@ -88,6 +70,7 @@ funcs.exportSymbolElement=function(element){
 	
 	//导出png的名称
 	var exportName=elementName?elementName:(linkageClassName?linkageClassName:libraryItemName);
+	exportName=exportName.replace(" ","_");//把名字中的空格替换为:"_"
 	const filePath=exportFolderPath+"/"+exportName;
 	
 	if(FLfile.createFolder(exportFolderPath)){
@@ -95,29 +78,13 @@ funcs.exportSymbolElement=function(element){
 	}else{
 		//fl.trace("Folder already exists");
 	}
-	
-	/*const totalFrames=element.libraryItem.timeline.frameCount;
-	if(totalFrames<=1){
+	//生成位图表
+	if(funcs.isOverflowed(element)){
+		return funcs.exportEveryFrame(element,exportFolderPath,exportName);
+	}else{
 		funcs.deleteOldFile(filePath);
-		//exportInstanceToPNGSequence方法，只允许选中一个
-		document.selectNone();
-		element.selected=true;
-		//只有一帧时，直接导出位图
-		document.exportInstanceToPNGSequence(filePath+".png");
-		//创建空的xml，使unity能正确的改变纹理类型
-		FLfile.write(filePath+".xml","<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<TextureAtlas imagePath=\""+exportName+".png"+"\"></TextureAtlas>");
-		//还原选择项
-		document.selection=selections;
-	}else{*/
-		
-		//生成位图表
-		if(funcs.isOverflowed(element)){
-			return funcs.exportEveryFrame(element,exportFolderPath,exportName);
-		}else{
-			funcs.deleteOldFile(filePath);
-			return funcs.exportAllFrameToImage(element,filePath,exportName);
-		}
-	//}
+		return funcs.exportAllFrameToImage(element,filePath,exportName);
+	}
 	return false;
 }
 
