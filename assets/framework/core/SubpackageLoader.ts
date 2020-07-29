@@ -37,7 +37,7 @@ export default class SubpackageLoader extends BaseBehaviour{
 				this._sceneProgressBar.node.active=false;
 				this._isLoading=false;//结束计算虚拟进度
 			}
-			completeCallback(err);
+			if(completeCallback)completeCallback(err);
 		});
 	}
 	

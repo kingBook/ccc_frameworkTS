@@ -75,7 +75,7 @@ export default class SceneLoader extends BaseBehaviour{
 					this._sceneProgressBar.setText("Loading scene "+this._sceneName+".fire "+Math.floor(progress*100)+"%...");
 					this._virtualProgress=progress;
 				}
-				if(onProgress!=null)onProgress(completedCount,totalCount,item);
+				if(onProgress)onProgress(completedCount,totalCount,item);
 			},
 			(error:Error)=>{
 				if(progressVisible){
@@ -83,7 +83,7 @@ export default class SceneLoader extends BaseBehaviour{
 					this._isLoading=false;//结束计算虚拟进度
 				}
 				if(isLaunchOnLoaded)cc.director.loadScene(sceneName);//启动场景
-				if(onLoaded!=null)onLoaded(error);
+				if(onLoaded)onLoaded(error);
 			}
 		);
 	}
