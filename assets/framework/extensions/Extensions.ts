@@ -25,7 +25,7 @@ cc.PhysicsManager.prototype['testPoint2']=function(point){
 	b2_aabb_tmp.upperBound.y=y+d;
 	
 	var callback=aabbQueryCallback;
-	callback.init(b2_vec2_tmp1);
+	callback.init(b2_aabb_tmp,b2_vec2_tmp1);
 	this._world.QueryAABB(callback,b2_aabb_tmp);
 	
 	var fixtures=callback.getFixtures();
@@ -43,7 +43,7 @@ cc.PhysicsManager.prototype['testAABB2']=function(rect){
 	b2_aabb_tmp.upperBound.y=rect.yMax/PTM_RATIO;
 	
 	var callback=aabbQueryCallback;
-	callback.init();
+	callback.init(b2_aabb_tmp);
 	this._world.QueryAABB(callback,b2_aabb_tmp);
 	
 	var fixtures=callback.getFixtures();

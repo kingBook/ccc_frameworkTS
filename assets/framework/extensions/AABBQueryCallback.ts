@@ -1,11 +1,13 @@
 ﻿const b2=window["b2"];
 export default class AABBQueryCallback{
 	
+	_aabb=null;
 	_point=new b2.Vec2();
 	_isPoint=false;
 	_fixtures=[];
 	
-	init(point?){
+	init(aabb,point?){
+		this._aabb=aabb;
 		if(point){
 			this._isPoint=true;
 			this._point.x=point.x;
@@ -17,13 +19,25 @@ export default class AABBQueryCallback{
 	}
 	
 	ReportFixture(fixture){
-		var body=fixture.GetBody();
 		if (this._isPoint){
 			if (fixture.TestPoint(this._point)){
 				this._fixtures.push(fixture);
 			}
 		}else{
-			this._fixtures.push(fixture);
+			var isOverlap=false;
+			var shape=fixture.GetShape();
+			var childCount=shape.GetChildCount();
+			for (var childIndex=0;childIndex<childCount;childIndex++){
+				var aabb=fixture.GetAABB(childIndex);
+				const aabbOverlap=b2.TestOverlapAABB(this._aabb,aabb);
+				if(aabbOverlap){
+					isOverlap=true;
+					break;
+				}
+			}
+			if(isOverlap){
+				this._fixtures.push(fixture);
+			}
 		}
 		return true;
 	}
