@@ -2,7 +2,7 @@
 
 const{ccclass,property}=cc._decorator;
 
-/** Yoyo动画 */
+/** Yoyo移动 */
 @ccclass
 export default class YoyoMove extends BaseBehaviour{
 	
@@ -12,9 +12,17 @@ export default class YoyoMove extends BaseBehaviour{
 	public distance:number=2;
 	@property({range:[0.1,3]})
 	public duration:number=0.8;
+	@property({visible(){return this.node.getComponent(cc.Widget);},tooltip:"当绑定有Widget组件时，是否先调用widget.updateAlignment();"})
+	public isUpdateAlignment:boolean=true;
 	
 	protected start():void{
 		super.start();
+		//
+		if(this.isUpdateAlignment){
+			let widget=this.node.getComponent(cc.Widget);
+			if(widget)widget.updateAlignment();
+		}
+		
 		let pos:cc.Vec3=this.node.position;
 		let offset:cc.Vec3=new cc.Vec3(Math.cos(this.angle*Math.PI/180)*this.distance,
 									   Math.sin(this.angle*Math.PI/180)*this.distance,

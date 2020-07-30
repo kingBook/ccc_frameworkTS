@@ -18,9 +18,9 @@ export default class SubpackageLoader extends BaseBehaviour{
 	 * @param subpackageName 子包名称
 	 * @param progressVisible 默认为 true，是否显示进度条
 	 * @param isDestroyCurrentSceneChildren 默认为 true，是否删除当前逻辑场景的所有非常驻节点
-	 * @param completeCallback 加载完成时的回调函数，格式：(error:Error):void
+	 * @param completeCallback 加载完成时的回调函数，格式：(error:Error,bundle:cc.AssetManager.Bundle):void
 	 */
-	public loadSubpackage(subpackageName:string,progressVisible:boolean=true,isDestroyCurrentSceneChildren:boolean=true,completeCallback?:(error:Error)=>void):void{
+	public loadSubpackage(subpackageName:string,progressVisible:boolean=true,isDestroyCurrentSceneChildren:boolean=true,completeCallback?:(error:Error,bundle:cc.AssetManager.Bundle)=>void):void{
 		if(isDestroyCurrentSceneChildren)this.destroyCurrentLogicSceneChildren(false);
 		if(progressVisible){
 			this._subpackageName=subpackageName;
@@ -37,7 +37,7 @@ export default class SubpackageLoader extends BaseBehaviour{
 				this._sceneProgressBar.node.active=false;
 				this._isLoading=false;//结束计算虚拟进度
 			}
-			if(completeCallback)completeCallback(err);
+			if(completeCallback)completeCallback(err,bundle);
 		});
 	}
 	
