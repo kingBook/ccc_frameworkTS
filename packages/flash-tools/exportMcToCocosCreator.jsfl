@@ -34,6 +34,7 @@ funcs.exportMcToPng=function(){
 					isExportComplete=funcs.exportSymbolElement(bitmapSymbol);
 				}
 			}else if(element.elementType=="shape"){
+				//fl.trace(element.isGroup);
 				var shapeSymbol=funcs.convertToSymbol(element,i,true);
 				isExportComplete=funcs.exportSymbolElement(shapeSymbol);
 			}else{
@@ -49,10 +50,14 @@ funcs.exportMcToPng=function(){
 }
 
 funcs.convertToSymbol=function(element,selectionIndex,isReplaceSelection){
+	var depthRecord=element.depth;
 	document.selectNone();
 	element.selected=true;
 	document.convertToSymbol("movie clip","","center");
 	var currentElement=document.selection[0];
+	while(currentElement.depth!=depthRecord){
+		document.arrange("backward");// "back", "backward", "forward",  "front"
+	}
 	if(isReplaceSelection){
 		selections[selectionIndex]=currentElement;
 	}
