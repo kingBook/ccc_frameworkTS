@@ -46,30 +46,34 @@ module.exports={
 	},
 	
 	/**
-	 * 根据uuid创建动画节点
-	 * @param {string} uuid 类型必须是'animation-clip'
-	 * @param {any} info 
+	 * 根据.anim文件的uuid和信息创建动画节点
+	 * @param {string} animFileUuid .anim文件的uuid
+	 * @param {any} info .anim文件信息 path,url,type,isSubAsset
 	 */
-	createAnimNodeWithUuid(uuid,info){
-		Editor.Ipc.sendToPanel("scene","scene:create-node-by-classid","xin");
-		
-		//let nodeUuids=Editor.Selection.curSelection('node');
-		//Editor.log(Editor.Selection.curActivate("node"));
-		//Editor.log(Editor.Selection.curGlobalActivate());
-		//添加一个组件：
-		//Editor.Ipc.sendToPanel('scene', 'scene:add-component', nodeID, 'cc.Animation');
-		// 修改精灵纹理
-		/*Editor.Ipc.sendToPanel('scene', 'scene:set-property',{
-			id: compObj.uuid,
-			path: "spriteFrame",//要修改的属性
-			type: "cc.SpriteFrame",
-			value: {uuid:spriteFrameUuid},
-			isSubProp: false,
-			});*/
-		Editor.Scene.callSceneScript("flash-tools","get-last-node-uuid",(lastNodeUuid)=>{
-			Editor.log(lastNodeUuid);
-			Editor.Ipc.sendToPanel("scene","scene:add-component",lastNodeUuid,"cc.Sprite");
-			Editor.Ipc.sendToPanel("scene","scene:add-component",lastNodeUuid,"cc.Animation");
+	createAnimNodeWithUuid(animFileUuid,info){
+		let animStrings=fs.readFileSync(info.path,"utf8");
+		let animData=JSON.parse(animStrings);
+		//创建新节点
+		Editor.Ipc.sendToPanel("scene","scene:create-node-by-classid",animData._name);
+		//调用场景脚本scene-walker.js
+		Editor.Scene.callSceneScript("flash-tools","set-last-node",animData,(lastNodeUuid,spriteComponentUuid,animationComponentUuid)=>{
+			//设置Sprite组件的spriteFrame属性
+			Editor.Ipc.sendToPanel("scene","scene:set-property",{
+				id:spriteComponentUuid,
+				path:"spriteFrame",
+				type:"cc.SpriteFrame",
+				value:{uuid:animData["curveData"]["comps"]["cc.Sprite"]["spriteFrame"][0]["value"]["__uuid__"]},
+				isSubProp:false
+			});
+			
+			//设置Animation组件的defaultClip
+			Editor.Ipc.sendToPanel("scene","scene:set-property",{
+				id:animationComponentUuid,
+				path:"defaultClip",
+				type:"cc.AnimationClip",
+				value:{uuid:animFileUuid},
+				isSubProp:false
+			});
 		});
 	},
 	
