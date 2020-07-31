@@ -7,6 +7,11 @@
 	"main-menu": {
 		"Tools/Create anim with config":{
 			"message":"flash-tools:menu-create-anim"
+		},
+		"Tools/Create node with .anim":{
+			"message":"flash-tools:menu-create-node-with-anim"
 		}
-	}
+	},
+	"scene-script":"scene-walker.js"
+	
 }

@@ -4,20 +4,20 @@
 	<dict>
 		<key>frames</key>
 		<dict>
-			<key>Symbol_100000</key>
+			<key>Symbol_300000</key>
 			<dict>
 				<key>frame</key>
-				<string>{{5,5},{31,30}}</string>
+				<string>{{5,5},{142,71}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
 				<false/>
 				<key>sourceColorRect</key>
-				<string>{{-31,-30},{31,30}}</string>
+				<string>{{-142,-71},{142,71}}</string>
 				<key>sourceSize</key>
-				<string>{31,30}</string>
+				<string>{142,71}</string>
 				<key>anchor</key>
-				<string>{0.4838709677419355,0.5}</string>
+				<string>{0.4964788732394366,0.5}</string>
 			</dict>
 		</dict>
 		<key>metadata</key>
@@ -25,11 +25,11 @@
 			<key>format</key>
 			<integer>2</integer>
 			<key>realTextureFileName</key>
-			<string>Symbol_1.png</string>
+			<string>Symbol_3.png</string>
 			<key>size</key>
-			<string>{64,64}</string>
+			<string>{256,256}</string>
 			<key>textureFileName</key>
-			<string>Symbol_1.png</string>
+			<string>Symbol_3.png</string>
 		</dict>
 	</dict>
 </plist>

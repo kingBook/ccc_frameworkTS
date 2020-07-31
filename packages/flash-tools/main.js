@@ -1,6 +1,7 @@
 'use strict';
 var fs=require('fs');
 var xml2js = require('xml2js');
+const { createCipher } = require('crypto');
 /** 单帧是否创建动画 */
 var isSingleFrameCreateAnim=true;
 
@@ -22,8 +23,55 @@ module.exports={
 		//执行菜单'Tools/Create anim with config'时调用
 		'flash-tools:menu-create-anim'(){
 			module.exports.queryAndCreateAnim();
+		},
+		//执行菜单'Tools/Create node with .anim'时调用
+		'flash-tools:menu-create-node-with-anim'(){
+			let selections=Editor.Selection.curSelection("asset");//当前选中资源的uuid列表
+			module.exports.createAnimNodeWithSelections(selections);
 		}
 	},//end messages
+	
+	/**
+	 * 根据当前选中项创建动画节点
+	 * @param {string[]} selections 当前选中资源的uuid列表（并不一定是.anim文件）
+	 */
+	createAnimNodeWithSelections(selections){
+		for(let i=0,len=selections.length;i<len;i++){
+			let uuid=selections[i];
+			let info=Editor.assetdb.assetInfoByUuid(uuid);//info.path,info.url,info.type,info.isSubAsset
+			if(info.type==="animation-clip"){
+				module.exports.createAnimNodeWithUuid(uuid,info);
+			}
+		}
+	},
+	
+	/**
+	 * 根据uuid创建动画节点
+	 * @param {string} uuid 类型必须是'animation-clip'
+	 * @param {any} info 
+	 */
+	createAnimNodeWithUuid(uuid,info){
+		Editor.Ipc.sendToPanel("scene","scene:create-node-by-classid","xin");
+		
+		//let nodeUuids=Editor.Selection.curSelection('node');
+		//Editor.log(Editor.Selection.curActivate("node"));
+		//Editor.log(Editor.Selection.curGlobalActivate());
+		//添加一个组件：
+		//Editor.Ipc.sendToPanel('scene', 'scene:add-component', nodeID, 'cc.Animation');
+		// 修改精灵纹理
+		/*Editor.Ipc.sendToPanel('scene', 'scene:set-property',{
+			id: compObj.uuid,
+			path: "spriteFrame",//要修改的属性
+			type: "cc.SpriteFrame",
+			value: {uuid:spriteFrameUuid},
+			isSubProp: false,
+			});*/
+		Editor.Scene.callSceneScript("flash-tools","get-last-node-uuid",(lastNodeUuid)=>{
+			Editor.log(lastNodeUuid);
+			Editor.Ipc.sendToPanel("scene","scene:add-component",lastNodeUuid,"cc.Sprite");
+			Editor.Ipc.sendToPanel("scene","scene:add-component",lastNodeUuid,"cc.Animation");
+		});
+	},
 	
 	queryAndCreateAnim(){
 		this.queryMultipleImageConfigAndCreateAnim();

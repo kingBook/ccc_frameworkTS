@@ -1,0 +1,41 @@
+{
+	"__type__": "cc.AnimationClip",
+	"_name": "Symbol_3",
+	"_objFlags": 0,
+	"_native": "",
+	"_duration": 0.041666666666666664,
+	"sample": 24,
+	"speed": 1,
+	"wrapMode": 2,
+	"curveData": {
+		"comps": {
+			"cc.Sprite": {
+				"spriteFrame": [
+					{
+						"frame": 0,
+						"value": {
+							"__uuid__": "ee2957ea-20bd-4c8f-a9f0-ab205c0ea415"
+						}
+					}
+				]
+			}
+		},
+		"props": {
+			"anchorX": [
+				{
+					"frame": 0,
+					"value": 0.4964788732394366,
+					"curve": "constant"
+				}
+			],
+			"anchorY": [
+				{
+					"frame": 0,
+					"value": 0.5,
+					"curve": "constant"
+				}
+			]
+		}
+	},
+	"events": []
+}
