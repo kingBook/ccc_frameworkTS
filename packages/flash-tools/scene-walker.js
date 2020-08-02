@@ -1,5 +1,5 @@
 module.exports={
-	/** 返回场景中最后一个节点的uuid */
+	/** 设置场景中最后一个节点*/
 	'set-last-node':function(event,animData){
 		let scene=cc.director.getScene();
 		let childrenCount=scene.childrenCount;
