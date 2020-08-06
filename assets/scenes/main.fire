@@ -1089,6 +1089,7 @@
       "y": -320
     },
     "_enablePhysics2DDebugDraw": true,
+    "_enablePhysicsDebugDrag": true,
     "_musicVolume": 1,
     "_effectsVolume": 1,
     "_games": [

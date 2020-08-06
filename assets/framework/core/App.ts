@@ -5,6 +5,7 @@ import SceneLoader from "./SceneLoader";
 import SubpackageLoader from "./SubpackageLoader";
 import PlayerPrefs from "./PlayerPrefs";
 import DebugDraw from "./DebugDraw";
+import PhysicsDebugDrag from "./PhysicsDebugDrag";
 
 const {ccclass, property} = cc._decorator;
 
@@ -38,6 +39,8 @@ export default class App extends BaseBehaviour{
 	private _gravity2D:cc.Vec2=new cc.Vec2(0,-320);
 	@property({displayName:"　　　Debug Draw",visible(){return this._enablePhysics2D;}})
 	private _enablePhysics2DDebugDraw:boolean=true;
+	@property({displayName:"　　　Debug Drag",visible(){return this._enablePhysics2D;}})
+	private _enablePhysicsDebugDrag:boolean=true;
 	@property({range:[0,1],slide:true,visible:true,tooltip:"背景音乐音量"})
 	private _musicVolume:number=1;
 	@property({range:[0,1],slide:true,visible:true,tooltip:"音效音量"})
@@ -138,6 +141,11 @@ export default class App extends BaseBehaviour{
 		if(this._enablePhysics2DDebugDraw){
 			physicsManager.debugDrawFlags=cc.PhysicsManager.DrawBits.e_jointBit|
 										  cc.PhysicsManager.DrawBits.e_shapeBit;
+		}
+		if(this._enablePhysicsDebugDrag){
+			let physicsDebugDragNode=new cc.Node(PhysicsDebugDrag.name);
+			physicsDebugDragNode.addComponent(PhysicsDebugDrag);
+			physicsDebugDragNode.parent=this.node;
 		}
 	}
 	
