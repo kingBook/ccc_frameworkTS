@@ -210,6 +210,7 @@ export default class PhysicsMouseJoint extends cc.Joint{
 		if(!self._inited)return;
 		
 		let physicsManager:any=cc.director.getPhysicsManager();
+		physicsManager._world.DestroyBody(self._joint.GetBodyA());
 		physicsManager._removeJoint(self);
 		self._joint=null;
 		self._inited=false;
