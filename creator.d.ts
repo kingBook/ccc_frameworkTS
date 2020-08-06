@@ -15762,7 +15762,7 @@ declare namespace cc {
 		The damping ratio.
 		!#zh
 		阻尼，表示关节变形后，恢复到初始状态受到的阻力。 */
-		0: number;		
+		dampingRatio: number;		
 		/** !#en
 		The maximum force
 		!#zh
