@@ -37,11 +37,6 @@ export default abstract class BaseBehaviour extends cc.Component{
 		//super.onBeginContact(contact,selfCollider,otherCollider);
 	}
 
-	/** 只在两个碰撞体结束接触时被调用一次（需要开启cc.RigidBody.enabledContactListener） */
-	protected onEndContact(contact:cc.PhysicsContact,selfCollider:cc.PhysicsCollider,otherCollider:cc.PhysicsCollider):void{
-		//super.onEndContact(contact,selfCollider,otherCollider);
-	}
-
 	/** 每次将要处理碰撞体接触逻辑时被调用（需要开启cc.RigidBody.enabledContactListener） */
 	protected onPreSolve(contact:cc.PhysicsContact,selfCollider:cc.PhysicsCollider,otherCollider:cc.PhysicsCollider):void{
 		//super.onPreSolve(contact,selfCollider,otherCollider);
@@ -50,6 +45,11 @@ export default abstract class BaseBehaviour extends cc.Component{
 	/** 每次处理完碰撞体接触逻辑时被调用（需要开启cc.RigidBody.enabledContactListener） */
 	protected onPostSolve(contact:cc.PhysicsContact,selfCollider:cc.PhysicsCollider,otherCollider:cc.PhysicsCollider):void{
 		//super.onPostSolve(contact,selfCollider,otherCollider);
+	}
+	
+	/** 只在两个碰撞体结束接触时被调用一次（需要开启cc.RigidBody.enabledContactListener） */
+	protected onEndContact(contact:cc.PhysicsContact,selfCollider:cc.PhysicsCollider,otherCollider:cc.PhysicsCollider):void{
+		//super.onEndContact(contact,selfCollider,otherCollider);
 	}
 	
 	/** 是否正在调度中... */
