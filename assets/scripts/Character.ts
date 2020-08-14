@@ -1,5 +1,4 @@
 ﻿import BaseBehaviour from "../framework/core/BaseBehaviour";
-import PhysicsContactBuffer from "../framework/objs/physics/PhysicsContactBuffer";
 import NodeUtil from "../framework/utils/NodeUtil";
 import Random from "../framework/utils/Random";
 
@@ -45,11 +44,11 @@ export default class Character extends BaseBehaviour{
 	private _rigidBody:cc.RigidBody;
 	private _isInAir:boolean;
 	private _faceOrientation:number;
-	private _physicsContactBuffer:PhysicsContactBuffer;
 	private _onLoadTime:number;
 	private _physicsCollider:cc.PhysicsCollider;
 	private _isDead:boolean;
 	private _isJumping:boolean;
+	private _groundContactColliders:cc.PhysicsCollider[]=[];
 	
 	public get isInAir():boolean{ return this._isInAir; }
 	public get linearVelocity():cc.Vec2{ return this._rigidBody.linearVelocity; }
@@ -60,7 +59,6 @@ export default class Character extends BaseBehaviour{
 		super.onLoad();
 		this._rigidBody=this.getComponent(cc.RigidBody);
 		this._animation=this.getComponent(cc.Animation);
-		this._physicsContactBuffer=this.getComponent(PhysicsContactBuffer);
 		this._physicsCollider=this.getComponent(cc.PhysicsCollider);
 		
 		this.setFaceOrientation(this._skinFaceOrientation);
@@ -72,7 +70,6 @@ export default class Character extends BaseBehaviour{
 	protected update(dt:number):void{
 		super.update(dt);
 		
-		this.checkInAir();
 		
 		//cc.log(this._animation.currentClip.name);
 	}
@@ -81,12 +78,18 @@ export default class Character extends BaseBehaviour{
 	protected onBeginContact(contact:cc.PhysicsContact,selfCollider:cc.PhysicsCollider,otherCollider:cc.PhysicsCollider):void{
 		super.onBeginContact(contact,selfCollider,otherCollider);
 		this.removeFrictionVertical(contact,selfCollider,otherCollider);
-	}
-	
-	/** 只在两个碰撞体结束接触时被调用一次（需要开启cc.RigidBody.enabledContactListener） */
-	protected onEndContact(contact:cc.PhysicsContact,selfCollider:cc.PhysicsCollider,otherCollider:cc.PhysicsCollider):void{
-		super.onEndContact(contact,selfCollider,otherCollider);
-		this.removeFrictionVertical(contact,selfCollider,otherCollider);
+		
+		if(!otherCollider.sensor){
+			let ny=-contact.getWorldManifold().normal.y;
+			if(ny>0.7){
+				if(this._isInAir){
+					this._groundContactColliders.push(otherCollider);
+					this._isInAir=false;
+					//落地时
+					this.onDropGround();
+				}
+			}
+		}
 	}
 	
 	/** 每次将要处理碰撞体接触逻辑时被调用（需要开启cc.RigidBody.enabledContactListener） */
@@ -104,53 +107,21 @@ export default class Character extends BaseBehaviour{
 		this.removeFrictionVertical(contact,selfCollider,otherCollider);
 	}
 	
-	private checkInAir():void{
-		let inAir:boolean=true;
-		let i=this._physicsContactBuffer.contacts.length;
-		while(--i>=0){
-			let contact=this._physicsContactBuffer.contacts[i];
-			if(!contact.isTouching())continue;
-			if(contact.disabled)continue;
-			let otherCollider:cc.PhysicsCollider=contact.colliderA.body==this._rigidBody?contact.colliderB:contact.colliderA;
-			if(otherCollider.sensor)continue;
-			let worldManifold=contact.getWorldManifold();
-			let normal=worldManifold.normal;
-			normal.mulSelf(-1);
-			if(normal.y>0.7){
-				inAir=false;
-				break;
-			}
-		}
-		if(inAir){
-			inAir=this.getRaycastInAir();
-		}
-		if(this._isInAir!=inAir){
-			if(this._isInAir&&!inAir){
-				//落地时
-				this.onDropGround();
-			}else{
+	/** 只在两个碰撞体结束接触时被调用一次（需要开启cc.RigidBody.enabledContactListener） */
+	protected onEndContact(contact:cc.PhysicsContact,selfCollider:cc.PhysicsCollider,otherCollider:cc.PhysicsCollider):void{
+		super.onEndContact(contact,selfCollider,otherCollider);
+		this.removeFrictionVertical(contact,selfCollider,otherCollider);
+		
+		let index=this._groundContactColliders.indexOf(otherCollider);
+		if(index>-1)this._groundContactColliders.splice(index,1);
+		if(this._groundContactColliders.length<=0){
+			if(!this._isInAir){
+				this._isInAir=true;
 				//离开地面时
 				this.onLeaveGround();
 			}
 		}
-		this._isInAir=inAir;
 	}
-	
-	private getRaycastInAir():boolean{
-		let groups=["Wall","SwitcherMovie","Stone"];
-		let p1=NodeUtil.getWorldPositionV2(this.node);
-		let p2=p1.add(cc.v2(0,-45));
-		let results=cc.director.getPhysicsManager().rayCast(p1,p2,cc.RayCastType.AllClosest);
-		for(let i=0,len=results.length;i<len;i++){
-			let result=results[i];
-			if(result.collider.sensor)continue;
-			if(groups.indexOf(result.collider.node.group)>-1){
-				return false;
-			}
-		}
-		return true;
-	}
-	
 	
 	/** 落地时 */
 	private onDropGround():void{
