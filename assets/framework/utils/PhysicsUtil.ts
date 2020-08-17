@@ -214,4 +214,48 @@ export default class PhysicsUtil{
 		return result;
 	}
 	//#endregion  box2d预测
+	
+	/**
+	 * 返回圆角矩形逆时针顺序顶点列表
+	 * @param extentsX 圆角矩形宽的一半
+	 * @param extentsY 圆角矩形高的一半
+	 * @param cornerRadius 圆角半径
+	 * @param t 光滑插值[0,1]
+	 */
+	public static getRoundRectangleCcwPoints(extentsX:number=50,extentsY:number=50,cornerRadius:number=10,t:number=0.1):cc.Vec2[]{
+		t=t<0?0:t>1?1:t;
+		cornerRadius=Math.min(cornerRadius,Math.min(extentsX,extentsY));
+		
+		let vertices:cc.Vec2[]=[];
+		let x:number,y:number,startAngle:number;
+		
+		x=-extentsX, y=-extentsY;
+		startAngle=Math.PI;
+		PhysicsUtil.calculteRoundCornerPoints(x+cornerRadius,y+cornerRadius,cornerRadius,startAngle,t,vertices);
+		
+		x=extentsX, y=-extentsY;
+		startAngle=-Math.PI*0.5;
+		PhysicsUtil.calculteRoundCornerPoints(x-cornerRadius,y+cornerRadius,cornerRadius,startAngle,t,vertices);
+		
+		x=extentsX, y=extentsY;
+		startAngle=0;
+		PhysicsUtil.calculteRoundCornerPoints(x-cornerRadius,y-cornerRadius,cornerRadius,startAngle,t,vertices);
+		
+		x=-extentsX, y=extentsY;
+		startAngle=Math.PI*0.5;
+		PhysicsUtil.calculteRoundCornerPoints(x+cornerRadius,y-cornerRadius,cornerRadius,startAngle,t,vertices);
+		return vertices;
+	}
+	
+	private static calculteRoundCornerPoints(centerX:number,centerY:number,cornerRadius:number,startAngle:number,t:number,out:cc.Vec2[]):void{
+		let arcLen=((Math.PI*0.5)*cornerRadius)|0;
+		let count=((arcLen-2)*t+2)|0;//[2,arcLen]
+		let x:number,y:number;
+		for(let i=0;i<=count;i++){
+			let angle=startAngle+(Math.PI*0.5)*(i/count);
+			x=centerX+Math.cos(angle)*cornerRadius;
+			y=centerY+Math.sin(angle)*cornerRadius;
+			out.push(new cc.Vec2(x,y));
+		}	
+	}
 }
