@@ -3,8 +3,7 @@ import Mathk from "../../utils/Mathk";
 
 const {ccclass, property} = cc._decorator;
 /**
- * 相机跟随
- * （主相机位于Canvas下，Canvas.fitHeight=true）
+ * 相机跟随（主相机位于Canvas下，Canvas.fitHeight=true），当targets.length===0时lookToTargets()将不起作用
  */
 @ccclass
 export default class CameraFollow2D extends BaseBehaviour{
@@ -43,10 +42,17 @@ export default class CameraFollow2D extends BaseBehaviour{
 		this._targets.push(value);
 	}
 	
-	public removeTarget(value:cc.Node):void{
-		let index=this._targets.indexOf(value);
-		if(index<0)return;
-		this._targets.splice(index,1);
+	public removeTarget(index:number):void;
+	public removeTarget(value:cc.Node):void;
+	public removeTarget(value:cc.Node|number):void{
+		if(typeof value === 'number'){
+			if(value>=0 && value<this._targets.length){
+				this._targets.splice(value,1);
+			}
+		}else{
+			let index=this._targets.indexOf(value as cc.Node);
+			this._targets.splice(index,1);
+		}
 	}
 	
 	protected onLoad():void{
@@ -103,6 +109,8 @@ export default class CameraFollow2D extends BaseBehaviour{
 	 * @param t 表示移动的插值，区间[0,1]值越大越快移动到目标中心
 	 */
 	private lookToTargets(t:number):void{
+		if(this._targets.length<=0)return;
+		
 		let size:cc.Size=cc.winSize;
 		let extents:cc.Vec2=new cc.Vec2(size.width*0.5,size.height*0.5);
 		extents=this.node.parent.convertToNodeSpaceAR(extents);
