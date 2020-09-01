@@ -7,6 +7,9 @@
 	"main-menu": {
 		"Tools/Execute scene-tools":{
 			"message":"scene-tools:menu-execute-scene-tools"
+		},
+		"Tools/Remove All PhysicsColliders":{
+			"message":"scene-tools:menu-remove-all-physicsColliders"
 		}
 	},
 	"scene-script":"scene-walker.js"

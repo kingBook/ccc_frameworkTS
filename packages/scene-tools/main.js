@@ -13,6 +13,9 @@ module.exports={
 		//执行菜单'Tools/Execute scene-tools'时调用
 		'scene-tools:menu-execute-scene-tools'(){
 			this.onExecute();
+		},
+		'scene-tools:menu-remove-all-physicsColliders'(){
+			Editor.Scene.callSceneScript("scene-tools","removeCurrentNodeAllPhysicsColliders",{},(result)=>{});
 		}
 	},//end messages
 	
@@ -23,6 +26,8 @@ module.exports={
 		
 		//复制指定资源到多个文件夹里
 		this.copyAssetToUrls();
+		
+		
 		
 	},
 	

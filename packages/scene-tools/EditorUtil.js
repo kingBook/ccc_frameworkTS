@@ -19,7 +19,7 @@ const EditorUtil={
 	/**
 	 * 
 	 * @param {string[]} sceneUrls 场景文件url列表，如：['db://assets/_bundleLevel1/level1.fire', ...]
-	 * @param {(scene,index:number)=>void} handleSceneCallback 操作已打开的场景的回调函数 
+	 * @param {(scene,index:number)=>boolean} handleSceneCallback 操作已打开的场景的回调函数（返回false时打断遍历）
 	 * @param {number} handleSceneDelay 操作已打开的场景的时间<毫秒>，默认为:200（经过这个时间才关闭并保存场景，然后打开下一个场景）
 	 * @param {number} openSceneInterval 打开场景的间隔时间<毫秒>，默认为:1000（这个间隔时间是为了当前场景保存完成后才打开下一个）
 	 */
@@ -30,24 +30,24 @@ const EditorUtil={
 		let intervalId=setInterval(()=>{
 			let sceneUrl=sceneUrls[i];
 			self.openScene(sceneUrl,(scene)=>{
-				handleSceneCallback(scene,i);
+				let isBreak=!handleSceneCallback(scene,i);
 				setTimeout(()=>{
 					self.saveCurrentScene();
 				},handleSceneDelay);
 				//
 				i++;
-				if(i>=len)clearInterval(intervalId);
+				if(i>=len||isBreak)clearInterval(intervalId);
 			});
-		}, handleSceneDelay+openSceneInterval);
+		}, i===0?1:handleSceneDelay+openSceneInterval);
 	},
 	
 	/**
 	 * 实例化预制件到多个场景
 	 * @param {string} prefabUuid 预制件uuid，如：'5eb41fac-5e4c-47ec-b199-632719dc08fc'
 	 * @param {string[]} sceneUrls 场景文件url列表，如：['db://assets/_bundleLevel1/level1.fire', ...]
-	 * @param {string} parentPath 父节点路径，如：'Canvas/Level'（当为null或""时，以当前打开的场景根节点为父节点）
+	 * @param {string} parentPath 父节点路径，默认为null，如：'Canvas/Level'（当为null或""时，以当前打开的场景根节点为父节点）
 	 */
-	instantiatePrefabWithScenes:function(prefabUuid,sceneUrls,parentPath){
+	instantiatePrefabWithScenes:function(prefabUuid,sceneUrls,parentPath=null){
 		this.foreachOpenScenes(sceneUrls,(scene)=>{
 			let parent=scene;
 			if(parentPath){
@@ -60,6 +60,7 @@ const EditorUtil={
 				let parentUuid=parent.uuid;
 				Editor.Ipc.sendToPanel("scene","scene:create-nodes-by-uuids",[prefabUuid],parentUuid,{unlinkPrefab:null});
 			}
+			return true;
 		});
 	},
 	
@@ -123,6 +124,32 @@ const EditorUtil={
 		Editor.assetdb.refresh(nAssetDestUrl,(err,results)=>{});
 		
 		if(callback)callback();
+	},
+	
+	/**
+	 * 获取当前选中的节点列表(cc.Node[])
+	 * @returns {cc.Node[]}
+	 */
+	getCurrentSelectionNodes(){
+		let nodes=[];
+		let nodeUuids=Editor.Selection.curSelection("node");
+		for(let i=0,len=nodeUuids.length;i<len;i++){
+			let node=cc.engine.getInstanceById(nodeUuids[i]);
+			nodes.push(node);
+		}
+		return nodes;
+	},
+	
+	/**
+	 * 遍历当前选中的节点
+	 * @param {(node:cc.Node)=>boolean} callback 回调函数（返回false时打断遍历）
+	 */
+	foreachCurrentSelectionNodes(callback){
+		let nodes=this.getCurrentSelectionNodes();
+		for(let i=0,len=nodes.length;i<len;i++){
+			let node=nodes[i];
+			if(!callback(node))break;
+		}
 	},
 	
 	/**

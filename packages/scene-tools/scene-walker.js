@@ -4,13 +4,29 @@ module.exports={
 		// 替换多个关卡场景的某个节点的Sprite
 		this.replaceSpriteFrameWithLevelScenes();
 		
-
 		//回调
 		if (event.reply) {
 			let result={};
 			event.reply(result);
 		}
 		
+	},
+	
+	'removeCurrentNodeAllPhysicsColliders':function(event,data){
+		EditorUtil.foreachCurrentSelectionNodes((node)=>{
+			let colliders=node.getComponents(cc.PhysicsCollider);
+			for(let i=0,len=colliders.length;i<len;i++){
+				node.removeComponent(colliders[i]);
+			}
+			return true;
+		});
+		//删除一个组件：
+		//Editor.Ipc.sendToPanel('scene', 'scene:remove-component', nodeID, compID);
+		
+		if (event.reply) {
+			let result={};
+			event.reply(result);
+		}
 	},
 	
 	/**
@@ -27,6 +43,7 @@ module.exports={
 			let spriteFrameUuid=EditorUtil.urlToUuid("db://assets/_bundleLevel"+level+"/lv"+level+".png/lv"+level);
 			EditorUtil.setSpriteFrame(sprite.uuid,spriteFrameUuid);
 			Editor.log("complete:"+level);
+			return true;
 		});*/
 	}
 	
